@@ -1,0 +1,9 @@
+.herolayout {
+	/* FIXME: default to every <ul>.*/
+	list-style: none;
+	padding: 0;
+}
+
+.herolayout label, .herolayout span {
+	padding: 5px;
+}
