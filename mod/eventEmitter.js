@@ -15,7 +15,7 @@ define(function(){
 				listener = listener.toString();
 				for(var i = listeners.length - 1; i > -1; --i){
 					if(listeners[i].toString() === listener){
-						return listeners[i];
+						listeners.splice(i, 1);
 					}
 				}
 			}
