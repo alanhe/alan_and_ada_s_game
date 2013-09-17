@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<title>Alan_and_Add_s_game</title>
 		<meta charset='utf-8'>
 		<style type="text/css">
 			.progress_height {
@@ -168,7 +169,7 @@
 					RandomAttack.execute(jobQueue);
 				},
 				onFailure: function(monster){
-					messageBox.add(Alan.name + '濒临死亡,原地休息后继续战斗.');
+					messageBox.add(Alan.name + '婵掍复姝讳骸,鍘熷湴浼戞伅鍚庣户缁垬鏂�.');
 					setTimeout(function(){
 						Alan.c_hp = Alan.m_hp;
 						statusBar.set('c_hp', Alan.c_hp);
@@ -179,6 +180,23 @@
 			
 			var jobQueue = JobQueue();
 			
+			var SlimeAda = {
+				name: 'SlimeAda',
+				c_hp: 10,
+				m_hp: 10,
+				atk: 1,
+				exp: 1,
+				gold: 1
+			};
+			
+			var SuperStrongAda = {
+				name: 'SuperStrongAda',
+				c_hp: 1000000,
+				m_hp: 1000000,
+				atk: 1,
+				exp: 10,
+				gold: 1
+			};
 		</script>
 	<body>
 </html>
