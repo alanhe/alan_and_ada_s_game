@@ -1,14 +1,14 @@
 define(function(){
-	return {
-		_listeners: {},
+	return function(){
+		this._listeners = {};
 		
-		on: function(event, listener){
+		this.on = function(event, listener){
 			var listeners = this._listeners[event] || [];
 			listeners.push(listener);
 			this._listeners[event] = listeners;
-		},
+		};
 		
-		off: function(event, listener){
+		this.off = function(event, listener){
 			var listeners = this._listeners[event];
 			if(listeners){
 				//FIXME: How to compare two functions equal?
@@ -19,17 +19,17 @@ define(function(){
 					}
 				}
 			}
-		},
+		};
 		
-		emit: function(event){
-			var args = Array.prototype.slice.call(arguments, 1),
+		this.emit = function(event){
+				var args = Array.prototype.slice.call(arguments, 1),
 				listeners = this._listeners[event];
 			
 			if(listeners){
 				for(var i = listeners.length - 1; i > -1; --i){
-					listeners[i](args);
+					listeners[i].apply(this, args);
 				}
 			}
-		}
+		};
 	};
 });
