@@ -1,4 +1,6 @@
 2013-09-18
 1. Implement AdaFactory under the supervision of Alan.
+2. Major updates, build Game Scene Framework.
+-----
 2013-09-17
-1. Testing AMD module loading with curl.js
+1. Testing AMD module loading with curl.js.

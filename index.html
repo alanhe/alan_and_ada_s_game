@@ -1,202 +1,21 @@
 <html>
 	<head>
-		<title>Alan_and_Add_s_game</title>
+		<title>Alan and Ada's Game </title>
 		<meta charset='utf-8'>
-		<style type="text/css">
-			.progress_height {
-				height: 50px;
-			}			
-			.n-box {
-				margin: 5px;
-				padding: 5px;
-			}
-			.n-border {
-				border: 1px solid black;
-			}
-		</style>
+		<link rel="stylesheet" href="main.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="jquery-2.0.3.js"></script>
-		<script type="text/javascript" src="MessageBox.js"></script>
-		<script type="text/javascript" src="Fight.js"></script>
-		<script type="text/javascript" src="JobQueue.js"></script>
-		<script type="text/javascript" src="StatusBar.js"></script>
+		<script type="text/javascript" src="curl.js"></script>
 		<script type="text/javascript">
-
-			
-			var clearScene = function () {
-				$('#container').empty();
+			var curlConfig = {
+				baseUrl: "./mod"
 			};
-			
-			var sc_setupAlan = function(){
-				var body = $('#container'),
-					btn_roll = $('<input class="n-box" type="button" value="Roll" />'),
-					btn_next = $('<input class="n-box" type="button" value="Next>>">'),
-					lbl_hp = $('<span class="n-box n-border">HP:null</span>'),
-					lbl_mp = $('<span class="n-box n-border">MP:null</span>'),
-					lbl_atk = $('<span class="n-box n-border">ATK:null</span>');
-				body.append('<h3 class="n-box">Create Alan</h3>');
-				body.append(lbl_hp);
-				body.append(lbl_mp);
-				body.append(lbl_atk);
-				body.append('<br />');
-				body.append(btn_roll);
-				body.append(btn_next);
-				btn_roll.click(function (){
-					Alan.c_hp = Alan.m_hp = parseInt(10 + Math.random() * 40);
-					Alan.c_mp = Alan.m_mp = parseInt(10 + Math.random() * 40);
-					Alan.atk = parseInt(5 + Math.random() * 10);
-					lbl_hp.text('HP:' + Alan.m_hp);
-					lbl_mp.text('MP:' + Alan.m_mp);
-					lbl_atk.text('ATK:' + Alan.atk);
-				});
-				btn_next.click(function(){
-					clearScene();
-					sc_main();
-				});
-			};
-			
-
-			
-			var sc_main = function(){
-				statusBar.init();
-				RandomAttack.execute(jobQueue);
-			};
-			
-			var ProgressBar = function(args){
-				if(!ProgressBar.prototype._init_static){
-					ProgressBar.prototype.dispose = function(){
-						clearTimeout(this.timerHandler);
-						this.domNode.remove();
-					};
-					
-					ProgressBar.prototype.placeAt = function(parent){
-						parent.append(this.domNode);
-					};
-					
-					ProgressBar.prototype.setMessage = function(sMessage){
-						this.messageBox.text(sMessage);
-					};
-					
-					ProgressBar.prototype.start = function(callback){
-						var self = this,
-							t_offset = this.timeInMillis / this.tick,
-							w_offset = 100 / this.tick,
-							w = 0;
-							
-						var thread = function(){
-							if((w+=w_offset) <= 100){
-								self.progressBar.css('width', w + '%');
-								self.timerHandler = setTimeout(thread, t_offset);
-							} else {
-								callback();
-							}
-						};
-						self.timerHandler = setTimeout(thread, t_offset);
-					};
-					
-					ProgressBar.prototype._init_static = true;
-				}
-			
-				this.domNode = $('<div style="border:1px solid black"><p /><div style="height:18px;width:0;background-color:#D4FFD7" /></div>');
-				this.messageBox = this.domNode.children('p:first');
-				this.progressBar = this.domNode.children('div:first');
-				console.debug("isNull: " + this.progressBar.length);
-				if(args.sMessage){
-					this.setMessage(args.sMessage);
-				}
-				this.timeInMillis = args.timeInMillis || 1000;
-				this.tick = args.tick || 100;
-				this.timerHandler = undefined;
-			};
-			
-			var task = function(args){
-				//TODO: validate root node;
-				var progressBar = new ProgressBar({sMessage: 'My message...'});
-				
-				progressBar.placeAt($(args.parent));
-				progressBar.start(function(){
-					progressBar.setMessage('The end');
-				});
-			};
-			
-			//clearScene();
-			jQuery(function(){
-				clearScene();
-				sc_setupAlan();
+		
+			curl(curlConfig, ["./scenes/SceneManager", "./layouts/HeroLayout"], function(SceneManager, HeroLayout){
+				var sceneManager = new SceneManager();
+				sceneManager.setScene("SCIndex");
 			});
 		</script>
 	</head>
 	<body>
-		<div id="dashboard"></div>
-		<div id="container"></div>
-		<div id="messageBox"></div>
-		<script type="text/javascript">
-			var Alan = {
-				name: 'Alan',
-				c_hp: 0,
-				m_hp: 0,
-				c_mp: 0,
-				m_mp: 0,
-				exp: 0,
-				lv: 1,
-				atk: 0,
-				gold: 0
-			};
-
-			var statusBar = StatusBar({Alan: Alan, domNode: $('#dashboard')});
-			
-			var messageBox = MessageBox({
-				domNode: $('#messageBox')
-			});
-
-			var modFight = Fight();
-			modFight.log = function(message){
-				messageBox.add(message);
-			};
-			modFight.damage = function(obj1, obj2){
-				obj1.c_hp -= obj2.atk;
-				if(obj1.name == Alan.name){
-					statusBar.set('c_hp', obj1.c_hp);
-				}
-			};
-			
-			var RandomAttack = {
-				execute: function(jobQueue){
-					modFight.fight(Alan, $.extend({}, SlimeAda), this.onSuccess, this.onFailure);
-				},
-				onSuccess: function(monster){
-					statusBar.set('exp', Alan.exp += monster.exp);
-					statusBar.set('gold', Alan.gold += monster.gold);
-					RandomAttack.execute(jobQueue);
-				},
-				onFailure: function(monster){
-					messageBox.add(Alan.name + '婵掍复姝讳骸,鍘熷湴浼戞伅鍚庣户缁垬鏂�.');
-					setTimeout(function(){
-						Alan.c_hp = Alan.m_hp;
-						statusBar.set('c_hp', Alan.c_hp);
-						RandomAttack.execute(jobQueue);
-					}, 5000);
-				}
-			};
-			
-			var jobQueue = JobQueue();
-			
-			var SlimeAda = {
-				name: 'SlimeAda',
-				c_hp: 10,
-				m_hp: 10,
-				atk: 1,
-				exp: 1,
-				gold: 1
-			};
-			
-			var SuperStrongAda = {
-				name: 'SuperStrongAda',
-				c_hp: 1000000,
-				m_hp: 1000000,
-				atk: 1,
-				exp: 10,
-				gold: 1
-			};
-		</script>
-	<body>
+	</body>
 </html>
