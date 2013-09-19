@@ -3,13 +3,14 @@
 		<title>Alan and Ada's Game </title>
 		<meta charset='utf-8'>
 		<link rel="stylesheet" href="main.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../json2.js"></script>
 		<script type="text/javascript" src="jquery-2.0.3.js"></script>
 		<script type="text/javascript" src="curl.js"></script>
 		<script type="text/javascript">
 			var curlConfig = {
 				baseUrl: "./mod"
 			};
-		
+
 			curl(curlConfig, ["./scenes/SceneManager", "./layouts/HeroLayout"], function(SceneManager, HeroLayout){
 				var sceneManager = new SceneManager();
 				sceneManager.setScene("SCIndex");
