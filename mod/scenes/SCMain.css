@@ -1,0 +1,10 @@
+#SCMain {
+	padding-left: 10px;	
+}
+
+#SCMain .panel{
+	float:left;
+	padding: 0;
+	margin: 5px;
+	border: 1px solid black;
+}
