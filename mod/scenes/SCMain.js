@@ -12,6 +12,7 @@ define(["./BaseScene", "text!./SCMain.html",
         // self.btnTeam;
         // self.btnMap;
         // self.btnSave;
+        // self.btnExit;
         // self.heroLayout;
 
         this.enter = function(bundle){
@@ -32,6 +33,7 @@ define(["./BaseScene", "text!./SCMain.html",
 			self.btnTeam = domNode.find("#btn_team");
 			self.btnMap = domNode.find("#btn_map");
 			self.btnSave = domNode.find("#btn_save");
+			self.btnExit = domNode.find("#btn_exit");
 
             self.heroLayout = new HeroLayout();
             self.heroLayout.setup({domNode: domNode.find("#panel2_a"), hero: self.hero});
