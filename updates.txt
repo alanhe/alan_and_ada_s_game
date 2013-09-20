@@ -1,3 +1,6 @@
+2013-09-20
+1. add fight mod.
+2. add Utils.js. Add no-so-robust random() function
 2013-09-18
 1. Implement AdaFactory under the supervision of Alan.
 2. Major updates, build Game Scene Framework.
