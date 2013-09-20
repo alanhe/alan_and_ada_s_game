@@ -13,6 +13,34 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		tick: 1000
 	}, new EventEmitter());
 
+	exports.toParty = function(party){
+		party.takeDamages = function(damages, damage_type){
+			for(var i = party.length - 1; i > -1; --i){
+				party[i].takeDamages(damages, damage_type);
+			}
+		};
+		
+		party.getAliveRoles = function(){
+			var ret = [];
+			for(var i = party.length - 1; i > -1; --i){
+				if(!party[i].isDead()){
+					ret.push(party[i]);
+				}
+			}
+			return exports.toParty(ret);
+		};
+
+		party.isAllDead = function(){
+			for(var i = party.length - 1; i > -1; --i){
+				if(!party[i].isDead()){
+					return false;
+				}
+			}
+			return true;
+		};
+		return party;
+	};
+
 	exports.triggerSkills = function(args){
 		//args
 		// aliveParty [party1, party2]
@@ -51,25 +79,6 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		}
 	};
 
-	exports.getAliveRoles = function(party){
-		var ret = [];
-		for(var i = party.length - 1; i > -1; --i){
-			if(party[i].c_hp > 0){
-				ret.push(party[i]);
-			}
-		}
-		return ret;
-	};
-
-	exports.isAllDead = function(party){
-		for(var i = party.length - 1; i > -1; --i){
-			if(party[i].c_hp > 0){
-				return false;
-			}
-		}
-		return true;
-	};
-
 	exports.newEnemies = function(hero){
 		var ret = [],
 			i = parseInt(Math.random() * 3); // index in range [0, 3], total of 4;
@@ -77,7 +86,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			ret.push(AdaFactory.newAda({lv: hero.lv}));
 		}
 		this.emit("msg_atk_new_enemies", ret);
-		return ret;
+		return exports.toParty(ret);
 	};
 
 	exports.calculateDamage = function(toRole, fromRole, partyAttack){
@@ -93,8 +102,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 	};
 
 	exports.attack = function(args){
-		var aliveParty1 = exports.getAliveRoles(exports.party1),
-			aliveParty2 = exports.getAliveRoles(exports.party2),
+		var aliveParty1 = exports.party1.getAliveRoles(),
+			aliveParty2 = exports.party2.getAliveRoles(),
 			partyAttack = args.count % 2 ? 1 : 2,
 			role1 = aliveParty1[parseInt(Math.random() * aliveParty1.length)],
 			role2 = aliveParty2[parseInt(Math.random() * aliveParty2.length)],
@@ -128,8 +137,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			evt: "AfterAttack",
 			attackParty: partyAttack});
 
-		var allDead1 = exports.isAllDead(exports.party1),
-			allDead2 = exports.isAllDead(exports.party2);
+		var allDead1 = exports.party1.isAllDead(),
+			allDead2 = exports.party2.isAllDead();
 		if(allDead1 || allDead2){ // if fight ends:
 			exports.timer.stop();
 			var callback = allDead2 ? exports.callback : exports.failback;
@@ -145,7 +154,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			return;
 		}
 		this.isActive = true;
-		this.party1 = args.party1;
+		this.party1 = exports.toParty(args.party1);
 		this.party2 = this.newEnemies(this.party1[0]);
 		this.callback = args.callback;
 		this.failback = args.failback;
