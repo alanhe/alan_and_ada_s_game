@@ -1,4 +1,4 @@
-define(["../EventEmitter"], function(EventEmitter){
+define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 	return function(){
 		$.extend(this, {
 			name: 'Ada',
@@ -11,7 +11,8 @@ define(["../EventEmitter"], function(EventEmitter){
 			atk: 0,
 			gold: 0,
 			drop_rate: 100,
-			title: ''
+			title: '',
+			equipedSkills: [new Attack()]
 		}, new EventEmitter());
 		
 		this.setAttribute = function(attrName, newVal){
@@ -24,6 +25,40 @@ define(["../EventEmitter"], function(EventEmitter){
 					newVal: newVal
 				});
 			}
+		};
+		
+		this.takeDamages = function(args){
+			//args
+			// damages int
+			// damage_type
+			
+			if (this.isDead()){
+				return;
+			}
+						
+			var c_hp = this.c_hp - args.damages;
+				
+			if (this.c_hp <= args.damages){
+				c_hp = 0;
+			}
+			else if (c_hp >= this.m_hp){
+				c_hp = this.m_hp;
+			}
+			this.setAttribute("c_hp", c_hp);
+		};
+		
+		this.onEvent = function(evt) {
+			var canCastList = [];
+			for(var i=0,j=this.equipedSkills.length; i<j; i++){
+				if (this.equipedSkills[i].canCast(this, evt)){
+					canCastList.push(this.equipedSkills[i]);
+				}
+			}
+			return canCastList;
+		};
+		
+		this.isDead = function(){
+			return this.c_hp == 0;
 		};
 	};
 });

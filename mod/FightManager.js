@@ -1,4 +1,4 @@
-define(["./Timer", "./EventEmitter", "./AdaFactory"], function(Timer, EventEmitter, AdaFactory){
+define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer, EventEmitter, AdaFactory, Utils){
 	// Message:
 	//		msg_atk_new_enemies, [], array of roles
 	//      msg_atk_gen_damages, {}
@@ -12,6 +12,44 @@ define(["./Timer", "./EventEmitter", "./AdaFactory"], function(Timer, EventEmitt
 		isActive: false,
 		tick: 1000
 	}, new EventEmitter());
+
+	exports.triggerSkills = function(args){
+		//args
+		// aliveParty [party1, party2]
+		// participant [roleInParty1, roleInParty2]
+		// evt: BeforeAttack, AfterAttack
+		// attackParty: 1 or 2
+		var attackParty = args.attackParty == 1 ? 0 : 1;
+		for(var iPartyIdx=0; iPartyIdx<2; iPartyIdx++){
+			var role = args.participant[iPartyIdx];
+			var canCastSkillList = [];
+			//send event
+			if(args.evt == "BeforeAttack"){
+				if (iPartyIdx == attackParty){
+					canCastSkillList = role.onEvent("OnAttack");
+				}
+			}
+			else if(args.evt == "AfterAttack"){
+				if (iPartyIdx != attackParty){
+					canCastSkillList = role.onEvent("BeHit");
+					if (role.isDead()){
+						Utils.joinArray(canCastSkillList, role.onEvent("OnDie"));
+					}
+				}
+			}
+			//cast skill
+			if (canCastSkillList.length > 0){
+				for(var iSkill=0,jSkillLength=canCastSkillList.length; iSkill<jSkillLength; iSkill++){
+					canCastSkillList[iSkill].cast({
+						caster: role,
+						victim: args.participant[1- iPartyIdx],
+						party1: args.aliveParty[iPartyIdx],
+						party2: args.aliveParty[1- iPartyIdx]
+					});
+				}
+			}
+		}
+	};
 
 	exports.getAliveRoles = function(party){
 		var ret = [];
@@ -58,6 +96,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory"], function(Timer, EventEmitt
 		var aliveParty1 = exports.getAliveRoles(exports.party1),
 			aliveParty2 = exports.getAliveRoles(exports.party2),
 			partyAttack = args.count % 2 ? 1 : 2,
+			role1 = aliveParty1[parseInt(Math.random() * aliveParty1.length)],
+			role2 = aliveParty2[parseInt(Math.random() * aliveParty2.length)],
 			roles = (function(role1, role2, partyAtk){
 				var ret = {};
 				if(partyAtk == 1){
@@ -68,13 +108,25 @@ define(["./Timer", "./EventEmitter", "./AdaFactory"], function(Timer, EventEmitt
 					ret.toRole = role1;
 				}
 				return ret;
-			})(aliveParty1[parseInt(Math.random() * aliveParty1.length)],
-			   aliveParty2[parseInt(Math.random() * aliveParty2.length)],
+			})(role1,
+			   role2,
 			   partyAttack);
 
+		exports.triggerSkills({
+			aliveParty: [aliveParty1, aliveParty2],
+			participant: [role1, role2], 
+			evt: "BeforeAttack",
+			attackParty: partyAttack});
+		
 		if(roles.toRole && roles.fromRole){
-			exports.calculateDamage(roles.toRole, roles.fromRole, partyAttack);
+			//exports.calculateDamage(roles.toRole, roles.fromRole, partyAttack);
 		}
+		
+		exports.triggerSkills({
+			aliveParty: [aliveParty1, aliveParty2],
+			participant: [role1, role2], 
+			evt: "AfterAttack",
+			attackParty: partyAttack});
 
 		var allDead1 = exports.isAllDead(exports.party1),
 			allDead2 = exports.isAllDead(exports.party2);

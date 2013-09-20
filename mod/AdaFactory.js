@@ -1,4 +1,4 @@
-define(["./roles/Ada", "./data/adaTitles"], function(Ada, adaTitles){
+define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], function(Ada, adaTitles, skillList, Utils){
 	var exports = {};
 
 	var genAtk = function(lv){
@@ -17,6 +17,24 @@ define(["./roles/Ada", "./data/adaTitles"], function(Ada, adaTitles){
 		ada.title = title.name;
 		ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
 	};
+	
+	var genSkills = function(ada){
+		var next_skill_rate = 50;
+		var skill_num = 0;
+		while(next_skill_rate > 0){
+			if (Math.random() * 100 < next_skill_rate){
+				skill_num++;
+			}
+			next_skill_rate -= 20;
+		}
+		if (skill_num == 0){
+			return;
+		}
+		var skillIdxList = Utils.random(skill_num, skillList.length, 0, true);
+		for(var i=0,j=skillIdxList.length; i<j; i++){
+			ada.equipedSkills.push(new skillList[skillIdxList[i]]);
+		}
+	};
 
 	exports.newAda = function(args){
 		// args.name;
@@ -34,6 +52,7 @@ define(["./roles/Ada", "./data/adaTitles"], function(Ada, adaTitles){
 		ada.drop_rate	= 100;
 
 		genTitle(ada);
+		genSkills(ada);
 
 		ada.c_hp		= ada.m_hp;
 		ada.c_mp		= ada.m_mp;

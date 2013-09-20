@@ -40,6 +40,13 @@ define(function(){
 		return ret;
 	};
 
+	exports.joinArray = function(array1, array2){
+		//all items in arrays will be added to array1
+		//caution!!: array1 will be changed
+		for(var i=0,j=array2.length; i<j; i++){
+			array1.push(array2[i]);
+		}
+	};
 
 	return exports;
 });
