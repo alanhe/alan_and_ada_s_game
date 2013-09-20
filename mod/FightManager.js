@@ -39,13 +39,14 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			}
 			//cast skill
 			if (canCastSkillList.length > 0){
-				for(var iSkill=0,jSkillLength=canCastSkillList.length; iSkill<jSkillLength; iSkill++){
-					canCastSkillList[iSkill].cast({
+				for(var iSkill=0; iSkill<canCastSkillList.length; iSkill++){
+					var logInfo = canCastSkillList[iSkill].cast({
 						caster: role,
 						victim: args.participant[1- iPartyIdx],
 						party1: args.aliveParty[iPartyIdx],
 						party2: args.aliveParty[1- iPartyIdx]
 					});
+					this.emit("msg_atk_gen_damages", logInfo);
 				}
 			}
 		}
@@ -114,17 +115,17 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 
 		exports.triggerSkills({
 			aliveParty: [aliveParty1, aliveParty2],
-			participant: [role1, role2], 
+			participant: [role1, role2],
 			evt: "BeforeAttack",
 			attackParty: partyAttack});
-		
+
 		if(roles.toRole && roles.fromRole){
 			//exports.calculateDamage(roles.toRole, roles.fromRole, partyAttack);
 		}
-		
+
 		exports.triggerSkills({
 			aliveParty: [aliveParty1, aliveParty2],
-			participant: [role1, role2], 
+			participant: [role1, role2],
 			evt: "AfterAttack",
 			attackParty: partyAttack});
 

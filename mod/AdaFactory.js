@@ -17,20 +17,20 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		ada.title = title.name;
 		ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
 	};
-	
+
 	var genSkills = function(ada){
-		var next_skill_rate = 50;
-		var skill_num = 0;
+		var next_skill_rate = 0;
+		var skill_num = 2;
 		while(next_skill_rate > 0){
 			if (Math.random() * 100 < next_skill_rate){
 				skill_num++;
 			}
-			next_skill_rate -= 20;
+			next_skill_rate -= 50;
 		}
 		if (skill_num == 0){
 			return;
 		}
-		var skillIdxList = Utils.random(skill_num, skillList.length, 0, true);
+		var skillIdxList = Utils.random(skill_num, skillList.length);
 		for(var i=0,j=skillIdxList.length; i<j; i++){
 			ada.equipedSkills.push(new skillList[skillIdxList[i]]);
 		}
