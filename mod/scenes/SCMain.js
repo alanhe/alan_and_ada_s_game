@@ -21,10 +21,11 @@ define(["./BaseScene", "text!./SCMain.html",
         	self.hero = bundle.hero;
             this.buildScene();
 
+			this.setupFight();
             this.testFight();
         };
 
-        this.testFight = function(){
+        this.setupFight = function(){
         	FightManager.on("msg_atk_new_enemies", function(enemies){
 				for(var i = 0; i < enemies.length; ++i){
 					self.logBox.log(enemies[i].name, function(str){
@@ -41,11 +42,22 @@ define(["./BaseScene", "text!./SCMain.html",
 						+ ", causing " + args.damages + " damage points.</li>";
 				});
 			});
+        };
+
+        this.testFight = function(){
 			FightManager.newFight({
 				party1: [self.hero],
-				callback: function(){
+				callback: function(enemies){
 					self.logBox.log("Defeat enermies! fight end.");
 					self.monstersLayout.destroy();
+					var gainExp = 0,
+						gainGold = 0;
+					for(var i = 0; i < enemies.length; ++i){
+						gainExp += enemies[i].exp;
+						gainGold += enemies[i].gold;
+					}
+					self.hero.setAttribute("exp", self.hero.exp + gainExp);
+					self.hero.setAttribute("gold", self.hero.gold + gainGold);
 				},
 				failback: function(){
 					self.logBox.log("Hero died!");

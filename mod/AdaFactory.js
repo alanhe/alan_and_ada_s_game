@@ -1,4 +1,4 @@
-define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], function(Ada, adaTitles, skillList, Utils){
+define(["./roles/Ada", "./data/adaList", "./data/adaTitles", "./data/skillList", "./Utils"], function(Ada, adaList, adaTitles, skillList, Utils){
 	var exports = {};
 
 	var genAtk = function(lv){
@@ -51,14 +51,14 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		// ({name: eee, name2:eee})
 
 		// args.lv
-		var ada = new Ada();
+		var ada = $.extend(new Ada(), adaList[parseInt(Math.random() * adaList.length)]);
 		ada.lv 			= args.lv;
-		ada.name 		= "Ada" + parseInt(Math.random() * 100);
+		ada.name 		= ada.name + parseInt(Math.random() * 100);
 		ada.m_mp		= 0;
 		ada.exp			= ada.lv;
 		ada.gold		= ada.lv * 5;
 		ada.drop_rate	= 100;
-		
+
 		ada.m_hp.init(parseInt(Math.random() * ada.lv * 20) + 5);
 		ada.atk.init(genAtk(ada.lv));
 

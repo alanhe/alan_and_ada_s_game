@@ -19,7 +19,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 				party[i].takeDamages(damages, damage_type);
 			}
 		};
-		
+
 		party.getAliveRoles = function(){
 			var ret = [];
 			for(var i = party.length - 1; i > -1; --i){
@@ -40,7 +40,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		};
 		return party;
 	};
-	
+
 	exports.triggerPassiveSkills = function(args){
 		//args
 		// aliveParty [party1, party2]
@@ -48,7 +48,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			for(var iRole=0,jPartyLength=args.aliveParty[iParty].length; iRole<jPartyLength; iRole++){
 				var role = args.aliveParty[iParty][iRole];
 				var canCastSkillList = role.onEvent("Passive");
-				
+
 				for(var iSkill=0; iSkill<canCastSkillList.length; iSkill++){
 					canCastSkillList[iSkill].cast({
 						caster: role,
@@ -140,7 +140,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			})(role1,
 			   role2,
 			   partyAttack);
-			 
+
 		for(var i=0,j=aliveParty2.length; i<j; i++){
 			aliveParty2[i].newRound();
 		}

@@ -2,7 +2,7 @@ define(["./Skill"], function(Skill){
 	return function(){
 		$.extend(this, new Skill(), {
 			name: 'CounterAttack',
-			rate: 100,
+			rate: 20,
 			triggerEvent: 'BeHit'
 		});
 
