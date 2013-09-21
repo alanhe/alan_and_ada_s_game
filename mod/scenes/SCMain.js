@@ -1,6 +1,6 @@
 define(["./BaseScene", "text!./SCMain.html",
-	"../layouts/HeroLayout", "../layouts/LogBox", "../FightManager",
-	"link!./SCMain.css"], function(BaseScene, sHTML, HeroLayout, LogBox, FightManager){
+	"../layouts/HeroLayout", "../layouts/MonstersLayout", "../layouts/LogBox", "../FightManager",
+	"link!./SCMain.css"], function(BaseScene, sHTML, HeroLayout, MonstersLayout, LogBox, FightManager){
     return function(){
         $.extend(this, new BaseScene());
 
@@ -15,6 +15,7 @@ define(["./BaseScene", "text!./SCMain.html",
         // self.btnExit;
         // self.heroLayout;
         // self.logBox;
+        // self.monstersLayout;
 
         this.enter = function(bundle){
         	self.hero = bundle.hero;
@@ -24,28 +25,31 @@ define(["./BaseScene", "text!./SCMain.html",
         };
 
         this.testFight = function(){
-        	FightManager.on("msg_atk_new_enemies", function(enermies){
-				for(var i = 0; i < enermies.length; ++i){
-					self.logBox.log(enermies[i].name, function(str){
-						return "<li>" + str  + "</li>";
+        	FightManager.on("msg_atk_new_enemies", function(enemies){
+				for(var i = 0; i < enemies.length; ++i){
+					self.logBox.log(enemies[i].name, function(str){
+						return "<li><strong>" + str  + "</strong> jumps from nowhere!</li>";
 					});
 				}
+				self.monstersLayout.addMonsters({monsters : enemies});
 			});
 			FightManager.on("msg_atk_gen_damages", function(args){
 				self.logBox.log(args, function(args){
 					return "<li>"
 						+ "<strong>" + args.fromName + "</strong> cast " + args.skillName
 						+ " to <strong>" + (typeof args.toName == "string" ? args.toName : "All")+ "</strong>"
-						+ ", cause " + args.damages + " damage points</li>";
+						+ ", causing " + args.damages + " damage points.</li>";
 				});
 			});
 			FightManager.newFight({
 				party1: [self.hero],
 				callback: function(){
 					self.logBox.log("Defeat enermies! fight end.");
+					self.monstersLayout.destroy();
 				},
 				failback: function(){
 					self.logBox.log("Hero died!");
+					self.monstersLayout.destroy();
 				}
 			});
         };
@@ -66,6 +70,10 @@ define(["./BaseScene", "text!./SCMain.html",
 
             self.heroLayout = new HeroLayout();
             self.heroLayout.setup({domNode: domNode.find("#panel2_a"), hero: self.hero});
+
+
+            self.monstersLayout = new MonstersLayout();
+            self.monstersLayout.setup({domNode: domNode.find("#panel3_c")});
 
             self.logBox = new LogBox();
             self.logBox.setup({domNode: domNode.find("#panel4_b")});
