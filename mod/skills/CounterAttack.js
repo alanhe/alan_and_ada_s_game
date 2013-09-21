@@ -2,32 +2,32 @@ define(["./Skill"], function(Skill){
 	return function(){
 		$.extend(this, new Skill(), {
 			name: 'CounterAttack',
-			rate: 20,
-			triggerEvent: 'BeHit'
+			rate: 30,
+			triggerEvent: 'OnBeHit'
 		});
 
-		this.subCanCast = function(caster, evt){
-			if (caster.isDead()){
+		this._canCast = this.canCast;
+
+		this.canCast = function(args){
+			if(args.fromRole.isDead()){
 				return false;
 			}
-			return true;
+			return this._canCast(args);
 		};
 
-		this.subCast = function(args){
-			// args:
-			//	caster
-			//	victim
-			//	party1, self party
-			//	party2, enemy party
-			var atk = args.caster.atk;
-			if (atk.getValue != undefined){
+		this.cast = function(args){
+			var atk = args.fromRole.atk;
+			if (atk.getValue){
 				atk = atk.getValue();
 			}
 			var damages = parseInt(atk * 0.5);
-			args.victim.takeDamages({damages: damages});
+			args.toRole.takeDamages(damages);
 
 			return {
-				damages: damages
+				fromName: args.fromRole.name,
+				toName: args.toRole.name,
+				damages: damages,
+				skillName: this.name
 			};
 		};
 	};

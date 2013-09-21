@@ -3,18 +3,12 @@ define(["./Skill"], function(Skill){
 		$.extend(this, new Skill(), {
 			name: "AttackUp",
 			rate: 100,
-			triggerEvent: "Passive",
+			triggerEvent: "OnPassive",
 			round : 9999
 		});
 
-		this.subCast = function(args){
-			// args:
-			//	caster
-			//	victim
-			//	party1, self party
-			//	party2, enemy party
-
-			args.caster.applyBuff({
+		this.cast = function(args){
+			args.fromRole.applyBuff({
 				target: "atk",
 				type: "percent",
 				value: 50,
@@ -23,6 +17,10 @@ define(["./Skill"], function(Skill){
 			});
 
 			return {
+				fromName: args.fromRole.name,
+				toName: args.fromRole.name,
+				damages: 0,
+				skillName: this.name
 			};
 		};
 	};

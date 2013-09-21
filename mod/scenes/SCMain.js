@@ -1,12 +1,34 @@
-define(["./BaseScene", "text!./SCMain.html",
+define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 	"../layouts/HeroLayout", "../layouts/MonstersLayout", "../layouts/LogBox", "../FightManager",
-	"link!./SCMain.css"], function(BaseScene, sHTML, HeroLayout, MonstersLayout, LogBox, FightManager){
+	"link!./SCMain.css"], function(BaseScene, sHTML, EventEmitter, HeroLayout, MonstersLayout, LogBox, FightManager){
+
+
+	var eventEmitter = new EventEmitter();
+
+	eventEmitter.on("msg_atk_start", function(self){
+		self.isFighting = true;
+		self.newFight();
+	});
+
+	eventEmitter.on("msg_atk_interrupt", function(self){
+		self.interruptFight();
+		eventEmitter.emit("msg_atk_stop", self);
+	});
+
+	eventEmitter.on("msg_atk_stop", function(self){
+		self.isFighting = false;
+		self.btnFight.text("Fight");
+	});
+
     return function(){
         $.extend(this, new BaseScene());
 
         var self = this;
+
+        this.isFighting = false;
         // self.hero;
 
+		// self.btnFight;
         // self.btnInventory;
         // self.btnSkills;
         // self.btnTeam;
@@ -21,8 +43,17 @@ define(["./BaseScene", "text!./SCMain.html",
         	self.hero = bundle.hero;
             this.buildScene();
 
+            this.setupMenus();
+
 			this.setupFight();
-            this.testFight();
+        };
+
+        this.setupMenus = function(){
+			this.btnFight.click(function(){
+				var message = $.trim(self.btnFight.text());
+				self.btnFight.text(message === "Fight" ? "Stop" : "Fight");
+				eventEmitter.emit(message === "Fight" ? "msg_atk_start" : "msg_atk_interrupt", self);
+			});
         };
 
         this.setupFight = function(){
@@ -42,14 +73,17 @@ define(["./BaseScene", "text!./SCMain.html",
 						+ ", causing " + args.damages + " damage points.</li>";
 				});
 			});
+			FightManager.on("msg_atk_interrupt", function(){
+				self.logBox.log(self.hero.name + " fled from a terrible fight...");
+			});
         };
 
-        this.testFight = function(){
+        this.newFight = function(){
 			FightManager.newFight({
 				party1: [self.hero],
 				callback: function(enemies){
 					self.logBox.log("Defeat enermies! fight end.");
-					self.monstersLayout.destroy();
+					self.monstersLayout.clear();
 					var gainExp = 0,
 						gainGold = 0;
 					for(var i = 0; i < enemies.length; ++i){
@@ -58,12 +92,20 @@ define(["./BaseScene", "text!./SCMain.html",
 					}
 					self.hero.setAttribute("exp", self.hero.exp + gainExp);
 					self.hero.setAttribute("gold", self.hero.gold + gainGold);
+
+					eventEmitter.emit("msg_atk_stop", self);
 				},
 				failback: function(){
 					self.logBox.log("Hero died!");
-					self.monstersLayout.destroy();
+
+					eventEmitter.emit("msg_atk_stop", self);
 				}
 			});
+        };
+
+        this.interruptFight = function(){
+			FightManager.interrupt();
+			this.monstersLayout.clear();
         };
 
         this.leave = function(){
@@ -73,6 +115,7 @@ define(["./BaseScene", "text!./SCMain.html",
         this.buildScene = function(){
             var domNode = $(sHTML);
 
+			self.btnFight = domNode.find("#btn_fight");
 			self.btnInventory = domNode.find("#btn_inventory");
 			self.btnSkills = domNode.find("#btn_skills");
 			self.btnTeam = domNode.find("#btn_team");

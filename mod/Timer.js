@@ -8,8 +8,10 @@ define(function(){
 				count: 0
 			},
 			stop: function(){
-				clearInterval(timer.handler);
-				timer.handler = -1;
+				if(timer.handler != -1){
+					clearInterval(timer.handler);
+					timer.handler = -1;
+				}
 			}
 		};
 

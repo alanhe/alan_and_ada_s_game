@@ -27,10 +27,14 @@ define(["text!./MonstersLayout.html",
 			}
 		};
 
-		this.destroy = function(){
+		this.clear = function(){
 			for(var i = this.monsterLayouts.length - 1; i > -1; --i){
 				this.monsterLayouts[i].destroy();
 			}
+		};
+
+		this.destroy = function(){
+			this.clear();
 			this.domNode.remove();
 		};
 	};

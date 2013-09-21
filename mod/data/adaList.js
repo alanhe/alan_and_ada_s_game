@@ -1,6 +1,6 @@
 define([
 	{
-		name: "???",
+		name: "?????",
 		picURL: "../resource/pic/nullAda.png"
 	},
 	{

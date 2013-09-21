@@ -37,12 +37,16 @@ define(function(){
 				ret.push(Math.random());
 			}
 		}
-		return ret;
+		return num === 1 ? ret[0] : ret;
 	};
 
 	exports.joinArray = function(array1, array2){
-		//all items in arrays will be added to array1
-		//caution!!: array1 will be changed
+		var ret = [];
+			//TODO: return new array;
+		return ret;
+	};
+
+	exports.appendArray = function(array1, array2){
 		for(var i=0,j=array2.length; i<j; i++){
 			array1.push(array2[i]);
 		}

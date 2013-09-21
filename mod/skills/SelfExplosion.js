@@ -1,29 +1,35 @@
-define(["./Skill"], function(Skill){
-	return function(){
+define(["./Skill"], function(Skill) {
+	return function() {
 		$.extend(this, new Skill(), {
-			name: 'SelfExplosion',
-			rate: 20,
-			triggerEvent: 'OnDie'
+			name : 'SelfExplosion',
+			rate : 20,
+			triggerEvent : 'OnDying'
 		});
 
-		this.subCast = function(args){
-			// args:
-			//	caster
-			//	victim
-			//	party1, self party
-			//	party2, enemy party
-			var m_hp = args.caster.m_hp;
-			if (m_hp.getValue != undefined){
+		this._canCast = this.canCast;
+
+		this.canCast = function(args) {
+			if (!args.fromRole.isDead()) {
+				return false;
+			}
+			return this._canCast(args);
+		};
+
+		this.cast = function(args) {
+			var m_hp = args.fromRole.m_hp;
+			if (m_hp.getValue) {
 				m_hp = m_hp.getValue();
 			}
 			var damages = parseInt(m_hp * 0.4);
-			for(var i = 0, party2 = args.party2; i < party2.length; ++i){
-				party2[i].takeDamages({damages: damages});
+			for (var i = 0; i < args.toParty.length; ++i) {
+				args.toParty[i].takeDamages(damages);
 			}
 
 			return {
-				toName: {},
-				damages: damages
+				fromName : args.fromRole.name,
+				toName : {},
+				damages : damages,
+				skillName : this.name
 			};
 		};
 	};

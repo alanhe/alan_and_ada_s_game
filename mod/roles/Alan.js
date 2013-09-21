@@ -12,7 +12,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			gold: 0,
 			equipedSkills: [new Attack()]
 		}, new EventEmitter());
-		
+
 		this.setAttribute = function(attrName, newVal){
 			if(attrName in this){
 				var oldVal= this[attrName];
@@ -24,19 +24,19 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 				});
 			}
 		};
-		
-		this.takeDamages = function(args){
+
+		this.takeDamages = function(damages){
 			//args
 			// damages int
 			// damage_type
-			
+
 			if (this.isDead()){
 				return;
 			}
-						
-			var c_hp = this.c_hp - args.damages;
-				
-			if (this.c_hp <= args.damages){
+
+			var c_hp = this.c_hp - damages;
+
+			if (this.c_hp <= damages){
 				c_hp = 0;
 			}
 			else if (c_hp >= this.m_hp){
@@ -44,17 +44,11 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			}
 			this.setAttribute("c_hp", c_hp);
 		};
-		
-		this.onEvent = function(evt) {
-			var canCastList = [];
-			for(var i=0,j=this.equipedSkills.length; i<j; i++){
-				if (this.equipedSkills[i].canCast(this, evt)){
-					canCastList.push(this.equipedSkills[i]);
-				}
-			}
-			return canCastList;
+
+		this.getSkills = function(){
+			return this.equipedSkills;
 		};
-		
+
 		this.isDead = function(){
 			return this.c_hp == 0;
 		};

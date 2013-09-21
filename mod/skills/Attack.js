@@ -6,21 +6,19 @@ define(["./Skill"], function(Skill){
 			triggerEvent: 'OnAttack'
 		});
 
-		this.subCast = function(args){
-			// args:
-			//	caster
-			//	victim
-			//	party1, self party
-			//	party2, enemy party
-			var atk = args.caster.atk;
-			if (atk.getValue != undefined){
+		this.cast = function(args){
+			var atk = args.fromRole.atk;
+			if (atk.getValue){
 				atk = atk.getValue();
 			}
-			var damages = parseInt(atk* (Math.random() * 0.6 + 0.7));
-			args.victim.takeDamages({damages: damages});
+			var damages = parseInt(atk * (Math.random() * 0.6 + 0.7));
+			args.toRole.takeDamages(damages);
 
 			return {
-				damages: damages
+				fromName: args.fromRole.name,
+				toName: args.toRole.name,
+				damages: damages,
+				skillName: this.name
 			};
 		};
 	};

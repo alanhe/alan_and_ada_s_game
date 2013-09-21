@@ -2,6 +2,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 	// Message:
 	//		msg_atk_new_enemies, [], array of roles
 	//      msg_atk_gen_damages, {}
+	//		msg_atk_interrupt, null
 
 	var exports = $.extend({
 		//party1: undefined
@@ -13,159 +14,132 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		tick: 1000
 	}, new EventEmitter());
 
-	exports.toParty = function(party){
-		party.takeDamages = function(damages, damage_type){
-			for(var i = party.length - 1; i > -1; --i){
-				party[i].takeDamages(damages, damage_type);
-			}
-		};
 
-		party.getAliveRoles = function(){
-			var ret = [];
-			for(var i = party.length - 1; i > -1; --i){
-				if(!party[i].isDead()){
-					ret.push(party[i]);
-				}
+	var isAllDead = function(roles){
+		for(var i = roles.length - 1; i > -1; --i){
+			if(!roles[i].isDead()){
+				return false;
 			}
-			return exports.toParty(ret);
-		};
-
-		party.isAllDead = function(){
-			for(var i = party.length - 1; i > -1; --i){
-				if(!party[i].isDead()){
-					return false;
-				}
-			}
-			return true;
-		};
-		return party;
+		}
+		return true;
 	};
 
-	exports.triggerPassiveSkills = function(args){
-		//args
-		// aliveParty [party1, party2]
-		for(var iParty=0; iParty<2; iParty++){
-			for(var iRole=0,jPartyLength=args.aliveParty[iParty].length; iRole<jPartyLength; iRole++){
-				var role = args.aliveParty[iParty][iRole];
-				var canCastSkillList = role.onEvent("Passive");
+	var getAliveRoles = function(roles){
+		var ret = [];
+		for(var i = roles.length -1; i > -1; --i){
+			if(!roles[i].isDead()){
+				ret.push(roles[i]);
+			}
+		}
+		return ret;
+	};
 
-				for(var iSkill=0; iSkill<canCastSkillList.length; iSkill++){
-					canCastSkillList[iSkill].cast({
-						caster: role,
-						party1: args.aliveParty[iParty],
-						party2: args.aliveParty[1- iParty]
-					});
+	exports.triggerSkills = function(args, chooseOne){
+		var skills = args.fromRole.getSkills();
+		for(var i = skills.length - 1; i > -1; --i){
+			if(skills[i].canCast(args)){
+				var logInfo =  skills[i].cast(args);
+				this.emit("msg_atk_gen_damages", logInfo);
+				if(chooseOne){
+					return;
 				}
 			}
 		}
 	};
 
-	exports.triggerSkills = function(args){
-		//args
-		// aliveParty [party1, party2]
-		// participant [roleInParty1, roleInParty2]
-		// evt: BeforeAttack, AfterAttack
-		// attackParty: 1 or 2
-		var attackParty = args.attackParty == 1 ? 0 : 1;
-		for(var iPartyIdx=0; iPartyIdx<2; iPartyIdx++){
-			var role = args.participant[iPartyIdx];
-			var canCastSkillList = [];
-			//send event
-			if(args.evt == "BeforeAttack"){
-				if (iPartyIdx == attackParty){
-					canCastSkillList = role.onEvent("OnAttack");
-				}
-			}
-			else if(args.evt == "AfterAttack"){
-				if (iPartyIdx != attackParty){
-					canCastSkillList = role.onEvent("BeHit");
-					if (role.isDead()){
-						Utils.joinArray(canCastSkillList, role.onEvent("OnDie"));
-					}
-				}
-			}
-			//cast skill
-			if (canCastSkillList.length > 0){
-				for(var iSkill=0; iSkill<canCastSkillList.length; iSkill++){
-					var logInfo = canCastSkillList[iSkill].cast({
-						caster: role,
-						victim: args.participant[1- iPartyIdx],
-						party1: args.aliveParty[iPartyIdx],
-						party2: args.aliveParty[1- iPartyIdx]
-					});
-					this.emit("msg_atk_gen_damages", logInfo);
-				}
-			}
+	exports.triggerPassiveSkills = function(party1, party2){
+		var roles = {
+			fromParty: party1,
+			toParty: party2,
+			moment: "OnPassive"
+		};
+		for(var i = 0; i < party1.length; ++i){
+			roles.fromRole = party1[i];
+			this.triggerSkills(roles, false);
 		}
+
+		roles.fromRole = party2;
+		roles.toRole = party1;
+		for(var i = 0; i < party2.length; ++i){
+			roles.fromRole = party2[i];
+			this.triggerSkills(roles, false);
+		}
+	};
+
+	exports.triggerActiveSkills = function(args){
+		//args:
+		//  toRole
+		//  toParty
+		//  fromRole
+		//  fromParty
+		//  moment
+
+		// For all the active skills equipped, including "ATTACK", only one will be triggered in one "hit" action;
+		// Make sure that, for all roles, "ATTACK" is the 1st skill in the "equipedSkills";
+		// The skills are triggered by different rates. First, the last skill is checked to see if it can be
+		// triggered, then the previous one, then the previous... At last, the "ATTACK" skill is checked, which is sure to be triggered.
+		this.triggerSkills(args, true);
 	};
 
 	exports.newEnemies = function(hero){
 		var ret = [],
-			i = parseInt(Math.random() * 3); // index in range [0, 3], total of 4;
+			i = Utils.random(1, 3); // index in range [0, 3], total of 4;
 		for(; i > -1; --i){
 			ret.push(AdaFactory.newAda({lv: hero.lv}));
 		}
 		this.emit("msg_atk_new_enemies", ret);
-		return exports.toParty(ret);
+		return ret;
 	};
 
-	exports.calculateDamage = function(toRole, fromRole, partyAttack){
-		//TODO: add more complex logic here;
-		var damage = fromRole.atk,
-			c_hp = toRole.c_hp - damage;
-		toRole.setAttribute("c_hp", c_hp < 0 ? 0 : c_hp);
-		this.emit("msg_atk_gen_damages", {
-			toRole: toRole,
-			fromRole: fromRole,
-			damage: damage
-		});
+	exports.swapRoles = function(roles){
+		return {
+			fromRole: roles.toRole,
+			fromParty: roles.toParty,
+			toRole: roles.fromRole,
+			toParty: roles.fromParty
+		};
 	};
 
 	exports.attack = function(args){
-		var aliveParty1 = exports.party1.getAliveRoles(),
-			aliveParty2 = exports.party2.getAliveRoles(),
-			partyAttack = args.count % 2 ? 1 : 2,
-			role1 = aliveParty1[parseInt(Math.random() * aliveParty1.length)],
-			role2 = aliveParty2[parseInt(Math.random() * aliveParty2.length)],
-			roles = (function(role1, role2, partyAtk){
-				var ret = {};
-				if(partyAtk == 1){
-					ret.fromRole = role1;
-					ret.toRole = role2;
-				} else {
-					ret.fromRole = role2;
-					ret.toRole = role1;
-				}
-				return ret;
-			})(role1,
-			   role2,
-			   partyAttack);
+		var aliveParty1 = getAliveRoles(exports.party1),
+			aliveParty2 = getAliveRoles(exports.party2),
+			role1 = aliveParty1[Utils.random(1, aliveParty1.length)],
+			role2 = aliveParty2[Utils.random(1, aliveParty2.length)],
+			roles = {
+				fromRole: role1,
+				fromParty: aliveParty1,
+				toRole: role2,
+				toParty: aliveParty2
+			};
 
-		for(var i=0,j=aliveParty2.length; i<j; i++){
+		if(args.count % 2 === 0){ // party2's turn
+			roles = exports.swapRoles(roles);
+		}
+
+		for(var i = aliveParty2.length - 1; i > -1; --i){
 			aliveParty2[i].newRound();
 		}
 
-		exports.triggerSkills({
-			aliveParty: [aliveParty1, aliveParty2],
-			participant: [role1, role2],
-			evt: "BeforeAttack",
-			attackParty: partyAttack});
+		//Trigger attack skills
+		roles.moment = "OnAttack";
+		exports.triggerActiveSkills(roles);
 
-		if(roles.toRole && roles.fromRole){
-			//exports.calculateDamage(roles.toRole, roles.fromRole, partyAttack);
-		}
+		//Trigger defensive skills
+		roles = exports.swapRoles(roles);
 
-		exports.triggerSkills({
-			aliveParty: [aliveParty1, aliveParty2],
-			participant: [role1, role2],
-			evt: "AfterAttack",
-			attackParty: partyAttack});
+		roles.moment = "OnBeHit";
+		exports.triggerActiveSkills(roles);
 
-		var allDead1 = exports.party1.isAllDead(),
-			allDead2 = exports.party2.isAllDead();
-		if(allDead1 || allDead2){ // if fight ends:
+		roles.moment = "OnDying";
+		exports.triggerActiveSkills(roles);
+
+
+		var isAllDead1 = isAllDead(aliveParty1),
+			isAllDead2 = isAllDead(aliveParty2);
+
+		if(isAllDead1 || isAllDead2){ // if fight ends:
 			exports.timer.stop();
-			var callback = allDead2 ? exports.callback : exports.failback;
+			var callback = isAllDead2 ? exports.callback : exports.failback;
 			if($.isFunction(callback)){
 				callback(exports.party2);
 			}
@@ -174,23 +148,27 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 	};
 
 	exports.newFight = function(args){
-		if(this.isActive){
-			return;
-		}
 		this.isActive = true;
-		this.party1 = exports.toParty(args.party1);
+		this.party1 = args.party1;
 		this.party2 = this.newEnemies(this.party1[0]);
 		this.callback = args.callback;
 		this.failback = args.failback;
 
-		exports.triggerPassiveSkills({
-			aliveParty: [this.party1, this.party2]
-		});
+		exports.triggerPassiveSkills(this.party1, this.party2);
 
 		this.timer = Timer.newTimer(this.attack, this.tick);
 	};
 
+	exports.interrupt = function(){
+		this.reset();
+		this.emit("msg_atk_interrupt");
+	};
+
 	exports.reset = function(){
+		if(this.timer){
+			this.timer.stop();
+			delete this.timer;
+		}
 		delete this.part1;
 		delete this.part2;
 		delete this.callback;

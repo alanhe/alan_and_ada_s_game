@@ -7,7 +7,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			max: -1,
 			min: 0
 		});
-		
+
 		this.init = function(initValue, maxValue, defaultValue){
 			this.current = initValue;
 			if (maxValue != undefined){
@@ -20,7 +20,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 				this.basic = this.current;
 			}
 		};
-		
+
 		this.addValue = function(value){
 			var ret = this.current + value;
 			if (ret < this.min){
@@ -33,12 +33,12 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 				this.current = ret;
 			}
 		};
-		
+
 		this.getValue = function(){
-			return this.current; 
+			return this.current;
 		};
 	};
-	
+
 	return function(){
 		$.extend(this, {
 			name: 'Ada',
@@ -55,7 +55,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			equipedSkills: [new Attack()],
 			_buffList: []
 		}, new EventEmitter());
-		
+
 		this.setAttribute = function(attrName, newVal){
 			if(attrName in this){
 				var oldVal= this[attrName];
@@ -67,18 +67,18 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 				});
 			}
 		};
-		
-		this.takeDamages = function(args){
+
+		this.takeDamages = function(damages){
 			//args
 			// damages int
 			// damage_type
-			
+
 			if (this.isDead()){
 				return;
 			}
-						
-			var c_hp = this.c_hp - args.damages;
-				
+
+			var c_hp = this.c_hp - damages;
+
 			if (c_hp < 0){
 				c_hp = 0;
 			}
@@ -87,21 +87,15 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			}
 			this.setAttribute("c_hp", c_hp);
 		};
-		
-		this.onEvent = function(evt) {
-			var canCastList = [];
-			for(var i=0,j=this.equipedSkills.length; i<j; i++){
-				if (this.equipedSkills[i].canCast(this, evt)){
-					canCastList.push(this.equipedSkills[i]);
-				}
-			}
-			return canCastList;
+
+		this.getSkills = function(){
+			return this.equipedSkills;
 		};
-		
+
 		this.isDead = function(){
 			return this.c_hp == 0;
 		};
-		
+
 		this.applyBuff = function(args){
 			//args
 			// target: "m_hp" or "atk"
@@ -109,7 +103,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			// value: int
 			// round: int >= 0
 			// delay: int >= 0
-			
+
 			var effectValue;
 			var property = this[args.target];
 			if (args.type == "add"){
@@ -118,14 +112,14 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			else if (args.type == "percent"){
 				effectValue = parseInt(property.basic * args.value / 100);
 			}
-			
+
 			if (args.delay == undefined){
 				args.delay = 0;
 			}
 			if (args.round == undefined){
 				args.round = 1;
 			}
-			
+
 			if (args.delay == 0 && args.round == 1){
 				property.addValue(effectValue);
 			}
@@ -138,11 +132,11 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 				});
 			}
 		};
-	
+
 		this.newRound = function(){
 			this.m_hp.current = this.m_hp.basic;
 			this.atk.current = this.atk.basic;
-			
+
 			for(var i=0; i<this._buffList.length; i++){
 				var buff = this._buffList[i];
 				if (buff.round == 0){
