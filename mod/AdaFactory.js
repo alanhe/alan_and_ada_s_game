@@ -16,7 +16,7 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		}
 		var titleIdxList = Utils.random(title_num, adaTitles.length);
 		for(var i=0,j=titleIdxList.length; i<j; i++){
-			var title = adaTitles[parseInt(Math.random() * adaTitles.length)];
+			var title = adaTitles[titleIdxList[i]];
 			ada.titles.push(title.name);
 			ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
 		}
