@@ -1,0 +1,27 @@
+.monsterLayout {
+	text-align: left;
+	float:left;
+}
+
+.monsterLayout h4 {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	width: 90px;
+}
+
+.monsterLayout .monsterHP {
+	width: 90%;
+}
+
+.monsterLayout .txt_lv {
+	margin-right: 5px;
+}
+
+.monsterLayout .lbl_lv {
+	font-weight: bold;
+}
+
+.monsterLayout li{
+	font-size: 10px;
+}
