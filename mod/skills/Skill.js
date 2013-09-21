@@ -6,6 +6,10 @@ define(["../EventEmitter"], function(EventEmitter){
 			triggerEvent: ''
 		}, new EventEmitter());
 		
+		this.subCanCast = function(caster, evt){
+			return false;
+		};
+		
 		this.canCast = function(caster, evt){
 			if (evt != this.triggerEvent){
 				return false;
@@ -16,7 +20,7 @@ define(["../EventEmitter"], function(EventEmitter){
 			if (parseInt(Math.random() * 100) < this.rate) {
 				return true;
 			}
-			return false;
+			return this.subCanCast(caster, evt);
 		};
 		
 		this.cast = function(args){
@@ -25,6 +29,22 @@ define(["../EventEmitter"], function(EventEmitter){
 			//	victim
 			//	party1, self party
 			//	party2, enemy party
+			
+			var castRet = this.subCast(args);
+			
+			this.debuglog(args, castRet.damages);
+
+			var ret = {
+				fromName: args.caster.name,
+				toName: args.victim.name,
+				skillName: this.name,
+				damages: castRet.damages
+			};	
+			if (castRet.toName != undefined){
+				ret.toName = castRet.toName;
+			}		
+			
+			return ret;
 		};
 		
 		this.debuglog = function(args, damages){
