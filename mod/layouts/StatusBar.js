@@ -32,7 +32,17 @@ define(["text!./StatusBar.html", "link!./StatusBar.css"], function(sHTML){
 		};
 
 		this.getColor = function(percent){
-			return "RGB(43, 23, 45)";
+			var color;
+		    if (percent >= 50) {
+		        color = 'RGB(139,238,132)';
+		    }
+		    else if (percent >= 20) {
+		        color = 'RGB(215,174,111)';
+		    }
+		    else {
+		        color = 'RGB(164,72,72)';
+		    }
+			return color;
 		};
 	};
 });
