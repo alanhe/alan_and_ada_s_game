@@ -19,7 +19,11 @@ define(["./Skill"], function(Skill){
 			//	victim
 			//	party1, self party
 			//	party2, enemy party
-			var damages = parseInt(args.caster.atk * 0.5);
+			var atk = args.caster.atk;
+			if (atk.getValue != undefined){
+				atk = atk.getValue();
+			}
+			var damages = parseInt(atk * 0.5);
 			args.victim.takeDamages({damages: damages});
 
 			return {

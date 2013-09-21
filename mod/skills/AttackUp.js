@@ -3,7 +3,8 @@ define(["./Skill"], function(Skill){
 		$.extend(this, new Skill(), {
 			name: "AttackUp",
 			rate: 100,
-			triggerEvent: "Passive"
+			triggerEvent: "Passive",
+			round : 9999
 		});
 
 		this.subCast = function(args){
@@ -12,12 +13,16 @@ define(["./Skill"], function(Skill){
 			//	victim
 			//	party1, self party
 			//	party2, enemy party
-			
-			var effectValue = parseInt(args.caster.atk * 0.5);
-			args.caster.atk += effectValue;
+
+			args.caster.applyBuff({
+				target: "atk",
+				type: "percent",
+				value: 50,
+				round: 99999,
+				delay: 0
+			});
 
 			return {
-				effect: effectValue
 			};
 		};
 	};

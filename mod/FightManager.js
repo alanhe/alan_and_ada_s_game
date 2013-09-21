@@ -42,6 +42,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 	};
 	
 	exports.triggerPassiveSkills = function(args){
+		//args
+		// aliveParty [party1, party2]
 		for(var iParty=0; iParty<2; iParty++){
 			for(var iRole=0,jPartyLength=args.aliveParty[iParty].length; iRole<jPartyLength; iRole++){
 				var role = args.aliveParty[iParty][iRole];
@@ -176,6 +178,10 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		this.party2 = this.newEnemies(this.party1[0]);
 		this.callback = args.callback;
 		this.failback = args.failback;
+
+		exports.triggerPassiveSkills({
+			aliveParty: [this.party1, this.party2]
+		});
 
 		this.timer = Timer.newTimer(this.attack, this.tick);
 	};

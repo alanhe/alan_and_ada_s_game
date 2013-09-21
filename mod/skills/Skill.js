@@ -2,8 +2,8 @@ define(["../EventEmitter"], function(EventEmitter){
 	return function(){
 		$.extend(this, {
 			name: '',
-			rate: 0,
-			triggerEvent: ''
+			rate: 100,
+			round: 1
 		}, new EventEmitter());
 		
 		this.subCanCast = function(caster, evt){
@@ -36,7 +36,7 @@ define(["../EventEmitter"], function(EventEmitter){
 
 			var ret = {
 				fromName: args.caster.name,
-				toName: args.victim.name,
+				toName: args.victim == undefined ? "" : args.victim.name,
 				skillName: this.name,
 				damages: castRet.damages
 			};	
@@ -50,6 +50,9 @@ define(["../EventEmitter"], function(EventEmitter){
 		this.debuglog = function(args, castRet){
 			if (castRet.damages != undefined){
 				console.log(args.caster.name + " " + this.name + " triggered, damages " + castRet.damages + ". " + args.victim.name + " hp left " + args.victim.c_hp + ".");
+			}
+			else{
+				console.log(args.caster.name + " " + this.name + " triggered.");
 			}
 		};
 	};

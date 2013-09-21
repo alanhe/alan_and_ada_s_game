@@ -1,12 +1,15 @@
 define([
 	"../skills/CounterAttack",
-	"../skills/SelfExplosion"
+	"../skills/SelfExplosion",
+	"../skills/AttackUp"
 ], function(
 	CounterAttack,
-	SelfExplosion
+	SelfExplosion,
+	AttackUp
 ){
 	return [
 		CounterAttack,
-		SelfExplosion
+		SelfExplosion,
+		AttackUp
 	];
 });

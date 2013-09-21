@@ -18,7 +18,13 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		for(var i=0,j=titleIdxList.length; i<j; i++){
 			var title = adaTitles[titleIdxList[i]];
 			ada.titles.push(title.name);
-			ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
+			ada.applyBuff({
+				target: title.effect,
+				type: "percent",
+				value: title.percent,
+				round: 99999,
+				delay: 0
+			});
 		}
 	};
 
@@ -48,17 +54,18 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		var ada = new Ada();
 		ada.lv 			= args.lv;
 		ada.name 		= "Ada" + parseInt(Math.random() * 100);
-		ada.m_hp		= parseInt(Math.random() * ada.lv * 50) + 100;
-		ada.atk			= genAtk(ada.lv);
 		ada.m_mp		= 0;
 		ada.exp			= ada.lv;
 		ada.gold		= ada.lv * 5;
 		ada.drop_rate	= 100;
+		
+		ada.m_hp.init(parseInt(Math.random() * ada.lv * 50) + 100);
+		ada.atk.init(genAtk(ada.lv));
 
 		genTitle(ada);
 		genSkills(ada);
 
-		ada.c_hp		= ada.m_hp;
+		ada.c_hp		= ada.m_hp.getValue();
 		ada.c_mp		= ada.m_mp;
 
 		return ada;
