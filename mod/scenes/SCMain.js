@@ -17,6 +17,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 
 	eventEmitter.on("msg_atk_stop", function(self){
 		self.isFighting = false;
+		self.monstersLayout.clear();
 		self.btnFight.text("Fight");
 	});
 
@@ -83,7 +84,6 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 				party1: [self.hero],
 				callback: function(enemies){
 					self.logBox.log("Defeat enermies! fight end.");
-					self.monstersLayout.clear();
 					var gainExp = 0,
 						gainGold = 0;
 					for(var i = 0; i < enemies.length; ++i){
@@ -105,7 +105,6 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 
         this.interruptFight = function(){
 			FightManager.interrupt();
-			this.monstersLayout.clear();
         };
 
         this.leave = function(){

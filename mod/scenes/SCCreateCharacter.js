@@ -17,7 +17,7 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
             this.btnRoll.click(function(){
                 var val = 0;
                 //HP:
-                val = parseInt(1000 + Math.random()  * 49);
+                val = parseInt(100 + Math.random()  * 49);
                 self.hero.setAttribute("c_hp", val);
                 self.hero.setAttribute("m_hp", val);
                 //MP:

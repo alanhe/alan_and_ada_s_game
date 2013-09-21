@@ -24,7 +24,7 @@ define(function(){
 			min = min || 0;
 			var delta = max - min;
 			if(delta < num && !allowDuplicate){
-				throw "IllegalArgumentExcpetion";
+				return null;
 			}
 			while(ret.length < num){
 				var newVal = parseInt(Math.random() * delta + min);

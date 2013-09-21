@@ -112,27 +112,28 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 				toParty: aliveParty2
 			};
 
-		if(args.count % 2 === 0){ // party2's turn
+		if(role1 && role2){
+			if(args.count % 2 === 0){ // party2's turn
+				roles = exports.swapRoles(roles);
+			}
+
+			for(var i = aliveParty2.length - 1; i > -1; --i){
+				aliveParty2[i].newRound();
+			}
+
+			//Trigger attack skills
+			roles.moment = "OnAttack";
+			exports.triggerActiveSkills(roles);
+
+			//Trigger defensive skills
 			roles = exports.swapRoles(roles);
+
+			roles.moment = "OnBeHit";
+			exports.triggerActiveSkills(roles);
+
+			roles.moment = "OnDying";
+			exports.triggerActiveSkills(roles);
 		}
-
-		for(var i = aliveParty2.length - 1; i > -1; --i){
-			aliveParty2[i].newRound();
-		}
-
-		//Trigger attack skills
-		roles.moment = "OnAttack";
-		exports.triggerActiveSkills(roles);
-
-		//Trigger defensive skills
-		roles = exports.swapRoles(roles);
-
-		roles.moment = "OnBeHit";
-		exports.triggerActiveSkills(roles);
-
-		roles.moment = "OnDying";
-		exports.triggerActiveSkills(roles);
-
 
 		var isAllDead1 = isAllDead(aliveParty1),
 			isAllDead2 = isAllDead(aliveParty2);
