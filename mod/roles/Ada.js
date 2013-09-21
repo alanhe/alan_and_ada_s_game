@@ -1,4 +1,40 @@
 define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
+	
+	var Property = function(propName, maxValue){
+		$extend(this, {
+			name: propName,
+			current: 0,
+			max: 0,
+			min: 0,
+			//buff
+			// type: add value or 
+			// value
+			// count: left round count
+			_buffs: []
+		});
+		
+		if (maxValue != undefined){
+			this.max = maxValue;
+		}
+		
+		this.addBuff = function(type, value, count){
+			
+		};
+		
+		this.addValue = function(value){
+			
+		};
+		
+		this.getValue = function(){
+			
+		};
+		
+		this.newRound = function(){
+			for(var i=0,j=_buffs.length; i<j; i++){
+			}
+		};
+	};
+	
 	return function(){
 		$.extend(this, {
 			name: 'Ada',
@@ -11,7 +47,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			atk: 0,
 			gold: 0,
 			drop_rate: 100,
-			title: '',
+			titles: [],
 			equipedSkills: [new Attack()]
 		}, new EventEmitter());
 		

@@ -7,15 +7,19 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 
 	var genTitle = function(ada){
 		var title_rate = 100;
-
-		if (Math.random() * 100 > title_rate){
-			return;
+		var title_num = 0;
+		while(title_rate > 0){
+			if (Math.random() * 100 < title_rate){
+				title_num++;
+			}
+			title_rate -= 30;
 		}
-
-		//TODO: more than one title can be applied
-		var title = adaTitles[parseInt(Math.random() * adaTitles.length)];
-		ada.title = title.name;
-		ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
+		var titleIdxList = Utils.random(title_num, adaTitles.length);
+		for(var i=0,j=titleIdxList.length; i<j; i++){
+			var title = adaTitles[parseInt(Math.random() * adaTitles.length)];
+			ada.titles.push(title.name);
+			ada[title.effect] = parseInt(ada[title.effect] * (100 + title.percent) / 100);
+		}
 	};
 
 	var genSkills = function(ada){

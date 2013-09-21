@@ -32,7 +32,7 @@ define(["../EventEmitter"], function(EventEmitter){
 			
 			var castRet = this.subCast(args);
 			
-			this.debuglog(args, castRet.damages);
+			this.debuglog(args, castRet);
 
 			var ret = {
 				fromName: args.caster.name,
@@ -47,8 +47,10 @@ define(["../EventEmitter"], function(EventEmitter){
 			return ret;
 		};
 		
-		this.debuglog = function(args, damages){
-			console.log(args.caster.name + " " + this.name + " triggered, damages " + damages + ". " + args.victim.name + " hp left " + args.victim.c_hp + ".");
+		this.debuglog = function(args, castRet){
+			if (castRet.damages != undefined){
+				console.log(args.caster.name + " " + this.name + " triggered, damages " + castRet.damages + ". " + args.victim.name + " hp left " + args.victim.c_hp + ".");
+			}
 		};
 	};
 });

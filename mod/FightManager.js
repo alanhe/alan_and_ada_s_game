@@ -40,6 +40,23 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		};
 		return party;
 	};
+	
+	exports.triggerPassiveSkills = function(args){
+		for(var iParty=0; iParty<2; iParty++){
+			for(var iRole=0,jPartyLength=args.aliveParty[iParty].length; iRole<jPartyLength; iRole++){
+				var role = args.aliveParty[iParty][iRole];
+				var canCastSkillList = role.onEvent("Passive");
+				
+				for(var iSkill=0; iSkill<canCastSkillList.length; iSkill++){
+					canCastSkillList[iSkill].cast({
+						caster: role,
+						party1: args.aliveParty[iParty],
+						party2: args.aliveParty[1- iParty]
+					});
+				}
+			}
+		}
+	};
 
 	exports.triggerSkills = function(args){
 		//args

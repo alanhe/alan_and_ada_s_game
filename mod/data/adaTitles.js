@@ -16,5 +16,17 @@ define([
 		name : 'Weak',
 		effect : 'atk',
 		percent : -10
+	},
+	{
+		id : 4,
+		name : 'Demon',
+		effect : 'atk',
+		percent : 100
+	},
+	{
+		id : 5,
+		name : 'Lazy',
+		effect : 'atk',
+		percent : -50
 	}
 ]);
