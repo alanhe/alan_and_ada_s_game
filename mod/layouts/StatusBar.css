@@ -1,0 +1,8 @@
+.statusBar {
+	border:1px solid #cccccc;	
+}
+
+.statusBar, .statusBar .statusLeft {
+	height: 18px;
+	border-radius: 5px;
+}
