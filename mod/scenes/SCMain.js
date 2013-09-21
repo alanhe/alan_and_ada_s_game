@@ -51,7 +51,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
         this.setupMenus = function(){
 			this.btnFight.click(function(){
 				var message = $.trim(self.btnFight.text());
-				self.btnFight.text(message === "Fight" ? "Stop" : "Fight");
+				self.btnFight.text(message === "Fight" ? "Flee" : "Fight");
 				eventEmitter.emit(message === "Fight" ? "msg_atk_start" : "msg_atk_interrupt", self);
 			});
         };
