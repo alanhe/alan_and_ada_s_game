@@ -140,6 +140,10 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			})(role1,
 			   role2,
 			   partyAttack);
+			 
+		for(var i=0,j=aliveParty2.length; i<j; i++){
+			aliveParty2[i].newRound();
+		}
 
 		exports.triggerSkills({
 			aliveParty: [aliveParty1, aliveParty2],

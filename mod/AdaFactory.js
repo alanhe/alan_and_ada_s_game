@@ -2,7 +2,7 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 	var exports = {};
 
 	var genAtk = function(lv){
-		return parseInt(Math.random() * lv * 10) + 10;
+		return parseInt(Math.random() * lv * 5) + 5;
 	};
 
 	var genTitle = function(ada){
@@ -59,7 +59,7 @@ define(["./roles/Ada", "./data/adaTitles", "./data/skillList", "./Utils"], funct
 		ada.gold		= ada.lv * 5;
 		ada.drop_rate	= 100;
 		
-		ada.m_hp.init(parseInt(Math.random() * ada.lv * 50) + 100);
+		ada.m_hp.init(parseInt(Math.random() * ada.lv * 20) + 5);
 		ada.atk.init(genAtk(ada.lv));
 
 		genTitle(ada);

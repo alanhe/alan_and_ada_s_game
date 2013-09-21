@@ -7,18 +7,15 @@ define(["../EventEmitter"], function(EventEmitter){
 		}, new EventEmitter());
 		
 		this.subCanCast = function(caster, evt){
-			return false;
+			return true;
 		};
 		
 		this.canCast = function(caster, evt){
 			if (evt != this.triggerEvent){
 				return false;
 			}
-			if (this.rate == 100){
-				return true;
-			}
-			if (parseInt(Math.random() * 100) < this.rate) {
-				return true;
+			if (parseInt(Math.random() * 100) >= this.rate) {
+				return false;
 			}
 			return this.subCanCast(caster, evt);
 		};
