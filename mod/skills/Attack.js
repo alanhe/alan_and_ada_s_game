@@ -6,7 +6,7 @@ define(["./Skill"], function(Skill){
 			triggerEvent: 'OnAttack'
 		});
 
-		this.cast = function(args){
+		this.subCast = function(args){
 			// args:
 			//	caster
 			//	victim
@@ -16,12 +16,7 @@ define(["./Skill"], function(Skill){
 			var damages = parseInt(args.caster.atk * (Math.random() * 0.6 + 0.7));
 			args.victim.takeDamages({damages: damages});
 
-			this.debuglog(args, damages);
-
 			return {
-				fromName: args.caster.name,
-				toName: args.victim.name,
-				skillName: this.name,
 				damages: damages
 			};
 		};

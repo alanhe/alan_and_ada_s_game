@@ -6,7 +6,7 @@ define(["./Skill"], function(Skill){
 			triggerEvent: 'OnDie'
 		});
 
-		this.cast = function(args){
+		this.subCast = function(args){
 			// args:
 			//	caster
 			//	victim
@@ -18,12 +18,8 @@ define(["./Skill"], function(Skill){
 				party2[i].takeDamages({damages: damages});
 			}
 
-			this.debuglog(args, damages);
-
 			return {
-				fromName: args.caster.name,
 				toName: {},
-				skillName: this.name,
 				damages: damages
 			};
 		};
