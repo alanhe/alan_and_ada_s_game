@@ -1,4 +1,4 @@
-define(["./Skill"], function(Skill){
+define(["./Skill", "../BuffManager"], function(Skill, BuffManager){
 	return function(){
 		$.extend(this, new Skill(), {
 			name: "AttackUp",
@@ -8,19 +8,22 @@ define(["./Skill"], function(Skill){
 		});
 
 		this.cast = function(args){
-			args.fromRole.applyBuff({
+			var buff = BuffManager.newBuff({
+				toRole: args.fromRole,
 				target: "atk",
-				type: "percent",
 				value: 50,
-				round: 99999,
-				delay: 0
+				round: this.round
 			});
+			
+			//passive skill should manually apply buff
+			buff.applyBuff();
 
 			return {
 				fromName: args.fromRole.name,
 				toName: args.fromRole.name,
 				damages: 0,
-				skillName: this.name
+				skillName: this.name,
+				buff: buff
 			};
 		};
 	};

@@ -22,7 +22,7 @@ define(["text!./HeroLayout.html", "link!./HeroLayout.css"], function(sHTML){
 			    var key = sDisplayAttrs[i];
 			    
 			    labels[key] = domNode.find("." + key);
-			    labels[key].text(hero[key]);
+			    labels[key].text(hero.getValue(key));
 			}
 			
 			// _init_listener:

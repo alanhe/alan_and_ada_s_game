@@ -16,10 +16,7 @@ define(["./Skill"], function(Skill){
 		};
 
 		this.cast = function(args){
-			var atk = args.fromRole.atk;
-			if (atk.getValue){
-				atk = atk.getValue();
-			}
+			var atk = args.fromRole.getValue("atk");
 			var damages = parseInt(atk * 0.5);
 			args.toRole.takeDamages(damages);
 

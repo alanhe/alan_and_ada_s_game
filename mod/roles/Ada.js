@@ -43,18 +43,31 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 		$.extend(this, {
 			name: 'Ada',
 			c_hp: 0,
-			m_hp: new Property("m_hp"),
+			m_hp: 0,//new Property("m_hp"),
+			_buff_m_hp: 100,
 			c_mp: 0,
 			m_mp: 0,
 			exp: 0,
 			lv: 1,
-			atk: new Property("atk"),
+			atk: 0,//new Property("atk"),
+			_buff_atk: 100,
 			gold: 0,
 			drop_rate: 100,
 			titles: [],
 			equipedSkills: [new Attack()],
 			_buffList: []
 		}, new EventEmitter());
+
+		this.getValue = function(propName){
+			if (this["_buff_" + propName] != undefined){
+				return parseInt(this[propName] * this["_buff_" + propName] / 100);
+			}
+			return this[propName];
+		};
+		
+		this.initAttribute = function(attrName, value){
+			this[attrName] = value;
+		};
 
 		this.setAttribute = function(attrName, newVal){
 			if(attrName in this){
@@ -82,8 +95,8 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			if (c_hp < 0){
 				c_hp = 0;
 			}
-			else if (c_hp > this.m_hp.getValue()){
-				c_hp = this.m_hp.getValue();
+			else if (c_hp > this.getValue("m_hp")){
+				c_hp = this.getValue("m_hp");
 			}
 			this.setAttribute("c_hp", c_hp);
 		};
@@ -96,7 +109,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			return this.c_hp == 0;
 		};
 
-		this.applyBuff = function(args){
+		/*this.applyBuff = function(args){
 			//args
 			// target: "m_hp" or "atk"
 			// type: "add" or "percent"
@@ -151,6 +164,6 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 					buff.round--;
 				}
 			}
-		};
+		};*/
 	};
 });

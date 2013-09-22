@@ -10,7 +10,7 @@ define(["text!./MonsterLayout.html",
 		// self.hpBar
 		// self.ada
 		var _monsterLayout_on_update_handler = function(evt){
-			self.hpBar.update(parseInt(evt.newVal / self.ada.m_hp.getValue() * 100));
+			self.hpBar.update(parseInt(evt.newVal / self.ada.getValue("m_hp") * 100));
 		};
 
 		this.setup = function(args){

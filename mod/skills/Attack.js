@@ -7,10 +7,7 @@ define(["./Skill"], function(Skill){
 		});
 
 		this.cast = function(args){
-			var atk = args.fromRole.atk;
-			if (atk.getValue){
-				atk = atk.getValue();
-			}
+			var atk = args.fromRole.getValue("atk");
 			var damages = parseInt(atk * (Math.random() * 0.6 + 0.7));
 			args.toRole.takeDamages(damages);
 

@@ -1,4 +1,4 @@
-define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer, EventEmitter, AdaFactory, Utils){
+define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"], function(Timer, EventEmitter, AdaFactory, Utils, BuffManager){
 	// Message:
 	//		msg_atk_new_enemies, [], array of roles
 	//      msg_atk_gen_damages, {}
@@ -41,7 +41,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 				var logInfo =  skills[i].cast(args);
 				this.emit("msg_atk_gen_damages", logInfo);
 				if(chooseOne){
-					return;
+					return logInfo;
 				}
 			}
 		}
@@ -78,7 +78,10 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 		// Make sure that, for all roles, "ATTACK" is the 1st skill in the "equipedSkills";
 		// The skills are triggered by different rates. First, the last skill is checked to see if it can be
 		// triggered, then the previous one, then the previous... At last, the "ATTACK" skill is checked, which is sure to be triggered.
-		this.triggerSkills(args, true);
+		var triggerRet = this.triggerSkills(args, true);
+		if (triggerRet && triggerRet.buff){
+			BuffManager.addBuff(triggerRet.buff);
+		}
 	};
 
 	exports.newEnemies = function(hero){
@@ -116,10 +119,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils"], function(Timer,
 			if(args.count % 2 === 0){ // party2's turn
 				roles = exports.swapRoles(roles);
 			}
-
-			for(var i = aliveParty2.length - 1; i > -1; --i){
-				aliveParty2[i].newRound();
-			}
+			
+			BuffManager.updateBuffList();
 
 			//Trigger attack skills
 			roles.moment = "OnAttack";
