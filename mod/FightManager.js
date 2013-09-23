@@ -1,8 +1,10 @@
 define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"], function(Timer, EventEmitter, AdaFactory, Utils, BuffManager){
 	// Message:
-	//		msg_atk_new_enemies, [], array of roles
-	//      msg_atk_gen_damages, {}
-	//		msg_atk_interrupt, null
+	//		atk_message_newEnemies, [], array of roles
+	//      atk_message_newDamages, {}
+	//      atk_message_success,
+	//		atk_message_failure
+	//		atk_message_interrupt, null
 
 	var exports = $.extend({
 		//party1: undefined
@@ -10,7 +12,6 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		//callback: undefined
 		//failback: undefined
 		// timer: undefined
-		isActive: false,
 		tick: 1000
 	}, new EventEmitter());
 
@@ -39,9 +40,9 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		for(var i = skills.length - 1; i > -1; --i){
 			if(skills[i].canCast(args)){
 				var logInfo =  skills[i].cast(args);
-				this.emit("msg_atk_gen_damages", logInfo);
+				this.emit("atk_message_newDamages", logInfo);
 				if(chooseOne){
-					return logInfo;
+					return;
 				}
 			}
 		}
@@ -78,10 +79,11 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		// Make sure that, for all roles, "ATTACK" is the 1st skill in the "equipedSkills";
 		// The skills are triggered by different rates. First, the last skill is checked to see if it can be
 		// triggered, then the previous one, then the previous... At last, the "ATTACK" skill is checked, which is sure to be triggered.
-		var triggerRet = this.triggerSkills(args, true);
-		if (triggerRet && triggerRet.buff){
-			BuffManager.addBuff(triggerRet.buff);
-		}
+		this.triggerSkills(args, true);
+		//var triggerRet = this.triggerSkills(args, true);
+		//if (triggerRet && triggerRet.buff){
+		//	BuffManager.addBuff(triggerRet.buff);
+		//}
 	};
 
 	exports.newEnemies = function(hero){
@@ -90,7 +92,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		for(; i > -1; --i){
 			ret.push(AdaFactory.newAda({lv: hero.lv}));
 		}
-		this.emit("msg_atk_new_enemies", ret);
+		this.emit("atk_message_newEnemies", ret);
 		return ret;
 	};
 
@@ -104,6 +106,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 	};
 
 	exports.attack = function(args){
+		console.debug("Attack triggered: " + args.count);
 		var aliveParty1 = getAliveRoles(exports.party1),
 			aliveParty2 = getAliveRoles(exports.party2),
 			role1 = aliveParty1[Utils.random(1, aliveParty1.length)],
@@ -119,8 +122,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 			if(args.count % 2 === 0){ // party2's turn
 				roles = exports.swapRoles(roles);
 			}
-			
-			BuffManager.updateBuffList();
+
+			//BuffManager.updateBuffList();
 
 			//Trigger attack skills
 			roles.moment = "OnAttack";
@@ -141,29 +144,25 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 
 		if(isAllDead1 || isAllDead2){ // if fight ends:
 			exports.timer.stop();
-			var callback = isAllDead2 ? exports.callback : exports.failback;
-			if($.isFunction(callback)){
-				callback(exports.party2);
-			}
+			exports.emit(isAllDead2 ? "atk_message_success" : "atk_message_failure", exports.party2);
 			exports.reset();
 		}
 	};
 
 	exports.newFight = function(args){
-		this.isActive = true;
 		this.party1 = args.party1;
 		this.party2 = this.newEnemies(this.party1[0]);
 		this.callback = args.callback;
 		this.failback = args.failback;
 
 		exports.triggerPassiveSkills(this.party1, this.party2);
-
+		console.debug("Before timer");
 		this.timer = Timer.newTimer(this.attack, this.tick);
 	};
 
 	exports.interrupt = function(){
 		this.reset();
-		this.emit("msg_atk_interrupt");
+		this.emit("atk_message_interrupt");
 	};
 
 	exports.reset = function(){
@@ -176,7 +175,6 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		delete this.callback;
 		delete this.failback;
 		this.tick = 1000;
-		this.isActive = false;
 	};
 
 	return exports;

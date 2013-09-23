@@ -1,4 +1,4 @@
-define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
+define(["../EventEmitter", "../skills/Attack", "../AttrUtils"], function(EventEmitter, Attack, AttrUtils){
 	return function(){
 		$.extend(this, {
 			// The following attributes are "simple" attributes. The values of them are set as is.

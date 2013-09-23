@@ -1,25 +1,131 @@
 define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
-	"../layouts/HeroLayout", "../layouts/MonstersLayout", "../layouts/LogBox", "../FightManager",
-	"link!./SCMain.css"], function(BaseScene, sHTML, EventEmitter, HeroLayout, MonstersLayout, LogBox, FightManager){
+	"../layouts/HeroLayout", "../layouts/MonstersLayout", "../layouts/LogBox", "../FightManager", "../AutoActions", "../layouts/ProgressBar",
+	"link!./SCMain.css"], function(BaseScene, sHTML, EventEmitter, HeroLayout, MonstersLayout, LogBox, FightManager, AutoActions, ProgressBar){
 
+	var setupFightManager = function(self){
+		FightManager.on("atk_message_newEnemies", function(enemies){
+			console.debug("find enemies: " + enemies.length);
+			if(!enemies || !enemies.length){
+				return;
+			}
+			self.logBox.log(enemies, function(domNode, enemies){
 
-	var eventEmitter = new EventEmitter();
+				var sMessage = "";
+				if(enemies.length == 1){
+					sMessage = "<strong>" + enemies[0].name + "</strong> jumps from nowhere!";
+				} else {
+					for(var i = 0, l = enemies.length - 3; i < l; ++i){
+						sMessage += "<strong>" + enemies[i].name + "</strong>, ";
+					}
+					sMessage += "<strong>" + enemies[i].name + "</strong> and " + "<strong>" + enemies[i + 1].name + "</strong> jumps from nowhere!";
+				}
+				domNode.append(sMessage);
+			});
+			self.monstersLayout.clear();
+			self.monstersLayout.addMonsters({monsters : enemies});
+		});
 
-	eventEmitter.on("msg_atk_start", function(self){
-		self.isFighting = true;
-		self.newFight();
-	});
+		FightManager.on("atk_message_newDamages", function(args){
+			var sMessage = "<strong>" + args.fromName + "</strong> cast " + args.skillName
+					+ " to <strong>" + (typeof args.toName == "string" ? args.toName : "All") + "</strong>"
+					+ ", causing " + args.damages + " damage points.";
+			self.logBox.log(sMessage);
+		});
 
-	eventEmitter.on("msg_atk_interrupt", function(self){
-		self.interruptFight();
-		eventEmitter.emit("msg_atk_stop", self);
-	});
+		FightManager.on("atk_message_success", function(enemies){
+			AutoActions.onGoingEvent = null;
+			self.logBox.log("Defeat enermies! fight end.");
 
-	eventEmitter.on("msg_atk_stop", function(self){
-		self.isFighting = false;
-		self.monstersLayout.clear();
-		self.btnFight.text("Fight");
-	});
+			var gainExp = 0,
+				gainGold = 0;
+			for(var i = 0; i < enemies.length; ++i){
+				gainExp += enemies[i].exp;
+				gainGold += enemies[i].gold;
+			}
+
+			self.hero.setAttribute("exp", self.hero.exp + gainExp);
+			self.hero.setAttribute("gold", self.hero.gold + gainGold);
+			AutoActions.drawEvent();
+		});
+
+		FightManager.on("atk_message_failure", function(){
+			self.logBox.log("Hero died!");
+			AutoActions.restoreStatus.start();
+		});
+
+		FightManager.on("atk_message_interrupt", function(){
+			self.logBox.log(self.hero.name + " fled from a terrible fight...");
+		});
+	};
+
+	var setupAutoActions = function(self){
+		AutoActions.on("auto_message_interrupt", function(){
+			self.btnFight.text("Quest");
+		});
+
+		AutoActions.restoreStatus.on("start", function(timeInMillis){
+			AutoActions.onGoingEvent = AutoActions.restoreStatus;
+			self.logBox.log(timeInMillis, function(domNode, timeInMillis){
+				domNode.append("<span><strong>" + self.hero.name + "</strong> decide to have a rest...</span>");
+				AutoActions.restoreStatus._progressBar = new ProgressBar();
+				AutoActions.restoreStatus._progressBar.setup({
+					domNode: domNode,
+					timeInMills: timeInMillis
+				});
+			});
+			AutoActions.restoreStatus._progressBar.start();
+		});
+		AutoActions.restoreStatus.on("finish", function(){
+			AutoActions.onGoingEvent = null;
+			self.hero.setAttribute("c_hp", self.hero.attr("m_hp").val());
+			self.hero.setAttribute("c_mp", self.hero.attr("m_hp").val());
+			self.logBox.log("<strong>" + self.hero.name + "</strong>: I'm alive~~~");
+			delete AutoActions.search._progressBar;
+			AutoActions.drawEvent();
+		});
+		AutoActions.restoreStatus.on("interrupt", function(){
+			AutoActions.onGoingEvent = null;
+		});
+
+		AutoActions.search.on("start", function(timeInMillis){
+			AutoActions.onGoingEvent = AutoActions.search;
+			self.logBox.log(timeInMillis, function(domNode, timeInMillis){
+				domNode.append("<span><strong>" + self.hero.name + "</strong> decides to look around...</span>");
+				AutoActions.search._progressBar = new ProgressBar();
+				AutoActions.search._progressBar.setup({
+					domNode: domNode,
+					timeInMills: timeInMillis
+				});
+			});
+			AutoActions.search._progressBar.start();
+		});
+		AutoActions.search.on("finish", function(findings){
+			AutoActions.onGoingEvent = null;
+			self.logBox.log(self.hero.name + " may have found something. GIVE ME!");
+			delete AutoActions.search._progressBar;
+			AutoActions.drawEvent();
+		});
+		AutoActions.search.on("interrupt", function(){
+			AutoActions.onGoingEvent = null;
+			AutoActions.search._progressBar.interrupt();
+			delete AutoActions.search._progressBar;
+		});
+
+		AutoActions.fight.on("start", function(){
+			AutoActions.onGoingEvent = AutoActions.fight;
+			FightManager.newFight({
+				party1: [self.hero]
+			});
+		});
+		AutoActions.fight.on("interrupt", function(){
+			AutoActions.onGoingEvent = null;
+			FightManager.interrupt();
+		});
+	};
+
+	var teardownAutoActions = function(self){
+
+	};
 
     return function(){
         $.extend(this, new BaseScene());
@@ -44,67 +150,22 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
         	self.hero = bundle.hero;
             this.buildScene();
 
-            this.setupMenus();
+			setupFightManager(this);
+			setupAutoActions(this);
 
-			this.setupFight();
+            this.setupMenus();
         };
 
         this.setupMenus = function(){
 			this.btnFight.click(function(){
-				var message = $.trim(self.btnFight.text());
-				self.btnFight.text(message === "Fight" ? "Flee" : "Fight");
-				eventEmitter.emit(message === "Fight" ? "msg_atk_start" : "msg_atk_interrupt", self);
-			});
-        };
-
-        this.setupFight = function(){
-        	FightManager.on("msg_atk_new_enemies", function(enemies){
-				for(var i = 0; i < enemies.length; ++i){
-					self.logBox.log(enemies[i].name, function(str){
-						return "<li><strong>" + str  + "</strong> jumps from nowhere!</li>";
-					});
-				}
-				self.monstersLayout.addMonsters({monsters : enemies});
-			});
-			FightManager.on("msg_atk_gen_damages", function(args){
-				self.logBox.log(args, function(args){
-					return "<li>"
-						+ "<strong>" + args.fromName + "</strong> cast " + args.skillName
-						+ " to <strong>" + (typeof args.toName == "string" ? args.toName : "All")+ "</strong>"
-						+ ", causing " + args.damages + " damage points.</li>";
-				});
-			});
-			FightManager.on("msg_atk_interrupt", function(){
-				self.logBox.log(self.hero.name + " fled from a terrible fight...");
-			});
-        };
-
-        this.newFight = function(){
-			FightManager.newFight({
-				party1: [self.hero],
-				callback: function(enemies){
-					self.logBox.log("Defeat enermies! fight end.");
-					var gainExp = 0,
-						gainGold = 0;
-					for(var i = 0; i < enemies.length; ++i){
-						gainExp += enemies[i].exp;
-						gainGold += enemies[i].gold;
-					}
-					self.hero.setAttribute("exp", self.hero.exp + gainExp);
-					self.hero.setAttribute("gold", self.hero.gold + gainGold);
-
-					eventEmitter.emit("msg_atk_stop", self);
-				},
-				failback: function(){
-					self.logBox.log("Hero died!");
-
-					eventEmitter.emit("msg_atk_stop", self);
+				var toQuest = $.trim(self.btnFight.text()) === "Quest";
+				self.btnFight.text(toQuest ? "Flee" : "Quest");
+				if(toQuest){
+					AutoActions.drawEvent();
+				} else {
+					AutoActions.interrupt();
 				}
 			});
-        };
-
-        this.interruptFight = function(){
-			FightManager.interrupt();
         };
 
         this.leave = function(){
@@ -124,7 +185,6 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 
             self.heroLayout = new HeroLayout();
             self.heroLayout.setup({domNode: domNode.find("#panel2_a"), hero: self.hero});
-
 
             self.monstersLayout = new MonstersLayout();
             self.monstersLayout.setup({domNode: domNode.find("#panel3_c")});

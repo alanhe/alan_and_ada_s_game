@@ -1,0 +1,13 @@
+.progressBar {
+	border:1px solid #cccccc;
+}
+
+.progressBar, .progressBar .progPrecent {
+	border-radius: 3px;
+	height: 1em;
+}
+
+.progressBar .progPrecent {
+	background: linear-gradient(#f5f4f4, #edfcda, #f5fbee);
+	width: 0;
+}
