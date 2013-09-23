@@ -26,7 +26,6 @@ define(["./Skill", "../BuffManager"], function(Skill, BuffManager){
 				skillName: this.name,
 				buff: buff
 			};*/
-			console.debug("Casting AttackUp");
 			return {
 				fromName: args.fromRole.name,
 				toName: args.fromRole.name,

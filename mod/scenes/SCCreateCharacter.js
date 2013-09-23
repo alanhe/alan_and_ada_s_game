@@ -36,7 +36,6 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
 
             this.txtName.blur(function(){
                 //FIXME: validate input hero's name
-                console.debug("blur is triggered");
                 self.hero.setAttribute("name", $.trim(self.txtName.text()));
             });
         };

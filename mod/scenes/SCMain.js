@@ -4,7 +4,6 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 
 	var setupFightManager = function(self){
 		FightManager.on("atk_message_newEnemies", function(enemies){
-			console.debug("find enemies: " + enemies.length);
 			if(!enemies || !enemies.length){
 				return;
 			}

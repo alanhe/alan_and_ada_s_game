@@ -17,11 +17,8 @@ define(function(){
 
 		timer.handler = setInterval(function(){
 			timer.bundle.count += 1;
-			console.debug("Tick");
-			console.debug(timer.bundle.count);
 			progback(timer.bundle);
 		}, timeInMillis);
-		console.debug("timer.handler = " + timer.handler + " : " + timeInMillis);
 
 		return timer;
 	};

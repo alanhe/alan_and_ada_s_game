@@ -106,7 +106,6 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 	};
 
 	exports.attack = function(args){
-		console.debug("Attack triggered: " + args.count);
 		var aliveParty1 = getAliveRoles(exports.party1),
 			aliveParty2 = getAliveRoles(exports.party2),
 			role1 = aliveParty1[Utils.random(1, aliveParty1.length)],
@@ -144,8 +143,9 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 
 		if(isAllDead1 || isAllDead2){ // if fight ends:
 			exports.timer.stop();
-			exports.emit(isAllDead2 ? "atk_message_success" : "atk_message_failure", exports.party2);
+			var tempParty2 = exports.party2;
 			exports.reset();
+			exports.emit(isAllDead2 ? "atk_message_success" : "atk_message_failure", tempParty2);
 		}
 	};
 
@@ -156,7 +156,6 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		this.failback = args.failback;
 
 		exports.triggerPassiveSkills(this.party1, this.party2);
-		console.debug("Before timer");
 		this.timer = Timer.newTimer(this.attack, this.tick);
 	};
 
@@ -170,8 +169,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 			this.timer.stop();
 			delete this.timer;
 		}
-		delete this.part1;
-		delete this.part2;
+		delete this.party1;
+		delete this.party2;
 		delete this.callback;
 		delete this.failback;
 		this.tick = 1000;

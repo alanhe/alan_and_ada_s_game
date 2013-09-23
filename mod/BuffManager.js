@@ -42,7 +42,6 @@ define(["./EventEmitter", "./Utils"], function(EventEmitter, Utils){
 	};
 
 	exports.updateBuffList = function(){
-		console.debug("updateBuffList begin");
 		for(var i = exports.buffList.length - 1; i > -1; --i){
 			var buff = exports.buffList[i];
 			if(buff.canTrigger()){
