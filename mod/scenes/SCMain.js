@@ -77,7 +77,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 		AutoActions.restoreStatus.on("finish", function(){
 			AutoActions.onGoingEvent = null;
 			self.hero.setAttribute("c_hp", self.hero.attr("m_hp").val());
-			self.hero.setAttribute("c_mp", self.hero.attr("m_hp").val());
+			self.hero.setAttribute("c_mp", self.hero.attr("m_mp").val());
 			self.logBox.log("<strong>" + self.hero.name + "</strong>: I'm alive~~~");
 			delete AutoActions.search._progressBar;
 			AutoActions.drawEvent();

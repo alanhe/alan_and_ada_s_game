@@ -53,7 +53,7 @@ define(["./EventEmitter"], function(EventEmitter){
 
 	exports.interrupt = function(){
 		if(this.onGoingEvent != null){
-			this.onGoingEvent.emit(interrupt);
+			this.onGoingEvent.emit("interrupt");
 		}
 		exports.emit("auto_message_interrupt");
 	};
