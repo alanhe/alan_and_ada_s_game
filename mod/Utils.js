@@ -10,6 +10,29 @@ define(function(){
 		return false;
 	};
 
+	exports.randomDraw = function(oArray){
+		// args:
+		// oArray - an object array. Every item in the array has a "probable" attribute to indicate its probability to be drawn.
+		var valTotal = (function(oArr){
+				var sum = 0;
+				for(var i = oArray.length - 1; i > -1; --i){
+					sum += oArray[i].probable;
+				}
+				return sum;
+			})(oArray),
+			valRandom = Math.random() * valTotal;
+		var sum = 0;
+		for(var i = 0; i < oArray.length - 1; ++i){
+			if((sum += oArray[i].probable) > valRandom){
+				break;
+			}
+		}
+		return {
+			i: i,
+			item: oArray[i]
+		};
+	};
+
 	exports.random = function(num, max, min, allowDuplicate){
 		// num, number of values return;
 		// max, value return, max excluded;
