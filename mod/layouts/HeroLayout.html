@@ -1,9 +1,26 @@
-<ul class="herolayout">
-	<li><label>Name</label><span class="name"></span></li>
-	<li><label>Lv</label><span class="lv"></span></li>
-	<li><label>Exp</label><span class="exp"></span></li>
-	<li><label>HP</label><span class="c_hp"></span>/<span class="m_hp"></span></li>
-	<li><label>MP</label><span class="c_mp"></span>/<span class="m_mp"></span></li>
-	<li><label>ATK</label><span class="atk"></span><br /></li>
-	<li><label>Gold</label><span class="gold"></span></li>
-</ul>
+<div class="heroLayout">
+	<h3 class="lbl_NAME padding_H"></h3>
+	<ul>
+		<li class="reg_LV"></li>
+		<li class="reg_HP"></li>
+		<li class="padding_H">
+			<p><label>ATK</label><span class="lbl_ATKMIN"></span> - <span class="lbl_ATKMAX"></span></p>
+			<p><label>DEF</label><span class="lbl_DEF"></span></p>
+		</li>
+		<li class="padding_H">
+			<p><label>GOLD</label><span class="lbl_GOLD"></span></p>
+		</li>
+		<li class="padding_H">
+			<p><label>CP</label><span class="lbl_CP"></span></p>
+			<p><label>SP</label><span class="lbl_SP"></span></p>
+		</li>
+		<li class="padding_H">
+			<p><label>STR</label><span class="lbl_STR"></span><span class="lbl_STR_A"></span><span class="btn_add_status btn_add_STR">+</span></p>
+			<p><label>VIT</label><span class="lbl_VIT"></span><span class="lbl_VIT_A"></span><span class="btn_add_status btn_add_VIT">+</span></p>
+			<p><label>INT</label><span class="lbl_INT"></span><span class="lbl_INT_A"></span><span class="btn_add_status btn_add_INT">+</span></p>
+			<p><label>LUK</label><span class="lbl_LUK"></span><span class="lbl_LUK_A"></span><span class="btn_add_status btn_add_LUK">+</span></p>
+		</li>
+	</ul>
+	<span class="button btn_upgrade">Upgrade</span>
+	<span class="button btn_cancel">Cancel</span>
+</div>

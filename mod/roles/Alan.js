@@ -1,4 +1,4 @@
-define(["../EventEmitter", "../skills/Attack", "../AttrUtils"], function(EventEmitter, Attack, AttrUtils){
+define(["./Jah", "../skills/Attack", "../AttrUtils"], function(Jah, Attack, AttrUtils){
 	return function(){
 		$.extend(this, {
 			// The following attributes are "simple" attributes. The values of them are set as is.
@@ -18,14 +18,15 @@ define(["../EventEmitter", "../skills/Attack", "../AttrUtils"], function(EventEm
 		}, {
 			_attrCache: {},
 			equipedSkills: [new Attack()]
-		}, new EventEmitter());
+		}, new Jah());
 
+/*
 		this.attr = function(attrName){
 			if(!(attrName in this)){ //TODO: Maybe the validation is for DEV only?
 				throw attrName + " is not defined in Hero!";
 			}
 			return this._attrCache[attrName] || (this._attrCache[attrName] = AttrUtils.wrap(this, attrName));
-		};
+		};*/
 
 		// Should this function be merged into attr()?
 		this.setAttribute = function(attrName, newVal){

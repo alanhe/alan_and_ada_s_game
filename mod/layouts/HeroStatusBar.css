@@ -1,0 +1,23 @@
+.heroStatusBar {
+	padding: 0 10px;
+	position: relative;
+}
+
+.heroStatusBar .statusLeft {
+	width: 0;
+	height: 1.5em;
+	background-color: #ffc;
+	border-radius: 4px;
+}
+
+.heroStatusBar .label {
+	margin-left: 20px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	line-height: 1.5em;
+}
+
+.heroStatusBar .label, .heroStatusBar .statusLeft {
+	padding-bottom: 3px;
+}
