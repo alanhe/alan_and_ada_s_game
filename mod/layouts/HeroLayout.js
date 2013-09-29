@@ -96,7 +96,6 @@ define(["text!./HeroLayout.html", "./HeroStatusBar", "link!./HeroLayout.css"], f
 		};
 		
 		this.setHP = function(){
-		    console.debug("this.setHP is called");
 		    var CHP = this.hero.CHP(),
 		          MHP = this.hero.MHP();
 		    this.lblHP.text(CHP);
@@ -145,7 +144,6 @@ define(["text!./HeroLayout.html", "./HeroStatusBar", "link!./HeroLayout.css"], f
 		this._init_hero_status_listeners = function(eventEmitter){
 		    var self = this;
 		    eventEmitter.on("update_status", function(types, oldVal, newVal){
-		        console.debug("[" + types.join(",") + "] " + oldVal + " -> " + newVal);
 		        for(var i = types.length - 1; i > -1; --i){
 		            switch(types[i]){
 		                case "LV": self.setlbl("LV"); self.showUpdateButtons(); break;

@@ -209,7 +209,6 @@ define(["../EventEmitter"], function(EventEmitter){
             var oldVal = this.aINT || 0;
             newVal = this.aINT = isAdd ? oldVal + newVal : newVal;
             var cexp = this.CEXP();
-            console.debug("CEXP | MEXP: " + cexp +  " : " + this.MEXP());
             if(cexp > this.MEXP()){
                 this.CEXP(cexp);
             }
