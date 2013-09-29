@@ -81,34 +81,6 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 			}
 		};
 
-		this.takeDamages = function(damages){
-			//args
-			// damages int
-			// damage_type
-
-			if (this.isDead()){
-				return;
-			}
-
-			var c_hp = this.c_hp - damages;
-
-			if (c_hp < 0){
-				c_hp = 0;
-			}
-			else if (c_hp > this.getValue("m_hp")){
-				c_hp = this.getValue("m_hp");
-			}
-			this.setAttribute("c_hp", c_hp);
-		};
-
-		this.getSkills = function(){
-			return this.equipedSkills;
-		};
-
-		this.isDead = function(){
-			return this.c_hp == 0;
-		};
-
 		/*this.applyBuff = function(args){
 			//args
 			// target: "m_hp" or "atk"
