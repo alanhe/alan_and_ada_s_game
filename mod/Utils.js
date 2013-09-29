@@ -10,20 +10,23 @@ define(function(){
 		return false;
 	};
 
-	exports.randomDraw = function(oArray){
+	exports.randomDraw = function(oArray, attrName){
 		// args:
 		// oArray - an object array. Every item in the array has a "probable" attribute to indicate its probability to be drawn.
+		//             The name of the attribute is "probable" by default.
+		attrName = attrName || "probable";
+		
 		var valTotal = (function(oArr){
 				var sum = 0;
 				for(var i = oArray.length - 1; i > -1; --i){
-					sum += oArray[i].probable;
+					sum += oArray[i][attrName];
 				}
 				return sum;
 			})(oArray),
 			valRandom = Math.random() * valTotal;
 		var sum = 0;
-		for(var i = 0; i < oArray.length - 1; ++i){
-			if((sum += oArray[i].probable) > valRandom){
+		for(var i = 0, l = oArray.length - 1; i < l; ++i){
+			if((sum += oArray[i][attrName]) > valRandom){
 				break;
 			}
 		}
