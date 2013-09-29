@@ -1,4 +1,4 @@
-define(["../EventEmitter"], function(EventEmitter){
+define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 	return function(){
 		$.extend(this, {
 			aCHP: 1,
@@ -18,7 +18,8 @@ define(["../EventEmitter"], function(EventEmitter){
 			// aATKMRP;   m - modification, r -ratio, p - permanent
 			// _aATKMRT;  t - temporary
 			// aATKMA;    a - absolute modification
-			}, new EventEmitter());
+			equipedSkills: [new Attack()]
+		}, new EventEmitter());
 
         this.attr = function(attrName, newVal, isAdd, types, stopEmit){
             // args:
@@ -125,10 +126,10 @@ define(["../EventEmitter"], function(EventEmitter){
 		this.MEXP = function(){
 		    return this._getNEXP(this.aLV);
 		};
-		
+
 		this._getUPLV = function(cexp, lv){
             var up = 0, next;
-            
+
             while(cexp >= (next = this._getNEXP(lv + up))){
                 cexp -= next;
                 ++up;
@@ -138,27 +139,27 @@ define(["../EventEmitter"], function(EventEmitter){
                 up: up
             };
 		};
-		
+
 		this.CEXP = function(newVal, isAdd, stopEmit){
             if(typeof newVal !== "number"){
                 return this.aCEXP || 0;
             }
             var oldVal = this.aCEXP || 0;
             newVal = isAdd ? oldVal + newVal : newVal;
-            
+
             var upLevel = this._getUPLV(newVal, this.LV());
-            
+
             if(upLevel.up !== 0){
                 this.LV(upLevel.up, true);
             }
-            
+
             this.aCEXP = newVal = upLevel.cexp;
             if(stopEmit !== true){
                 this.emitUpdate(["CEXP"], oldVal, newVal);
             }
             return this;
         };
-        
+
         this._getNCP = function(lv){
             return parseInt(lv / 5) + 3;
         };
@@ -172,14 +173,14 @@ define(["../EventEmitter"], function(EventEmitter){
             if(typeof isAdd === "undefined"){
                 throw "sAdd must be set in LV()!";
             }
-            
-            var 
+
+            var
                   up = newVal,
                 oldVal = this.aLV,
                 newVal = oldVal + up,
                 sumCP = 0,
                 sumSP = 0;
-            
+
             for(var i = 0; i < up; ++i){
                 sumCP += this._getNCP(this.aLV);
                 sumSP += this._getNSP(this.aLV);
@@ -230,7 +231,7 @@ define(["../EventEmitter"], function(EventEmitter){
 		this.SP = function(newVal, isAdd, stopEmit){
 		    return this.attr("aSP", newVal, isAdd, ["SP"], stopEmit);
 		};
-		
+
 		// Utils functions:---------------------------------------------------
 		this.isDead = function(){
 		    return this.aCHP === 0;
@@ -244,7 +245,7 @@ define(["../EventEmitter"], function(EventEmitter){
 		    }
 		};
 		this._getUpdateCost = function(oldVal){
-		    return parseInt(oldVal / 10) + 3; 
+		    return parseInt(oldVal / 10) + 3;
 		};
 	};
 });
