@@ -9,6 +9,8 @@ define([
 ){
 	return [
 		CounterAttack,
+		CounterAttack,
+		CounterAttack,
 		SelfExplosion,
 		AttackUp
 	];

@@ -37,13 +37,15 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 
 			var gainExp = 0,
 				gainGold = 0;
-			for(var i = 0; i < enemies.length; ++i){
-				gainExp += enemies[i].exp;
-				gainGold += enemies[i].gold;
+
+			for(var i = enemies.length - 1; i > -1; --i){
+				gainExp += enemies[i].CEXP();
+				gainGold += enemies[i].GOLD();
 			}
 
-			self.hero.setAttribute("exp", self.hero.exp + gainExp);
-			self.hero.setAttribute("gold", self.hero.gold + gainGold);
+			self.hero.CEXP(gainExp, true);
+			self.hero.GOLD(gainGold, true);
+
 			AutoActions.drawEvent();
 		});
 
@@ -76,8 +78,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 		});
 		AutoActions.restoreStatus.on("finish", function(){
 			AutoActions.onGoingEvent = null;
-			self.hero.setAttribute("c_hp", self.hero.attr("m_hp").val());
-			self.hero.setAttribute("c_mp", self.hero.attr("m_mp").val());
+			self.hero.CHP(self.hero.MHP());
 			self.logBox.log("<strong>" + self.hero.name + "</strong>: I'm alive~~~");
 			delete AutoActions.search._progressBar;
 			AutoActions.drawEvent();
@@ -100,7 +101,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 		});
 		AutoActions.search.on("finish", function(findings){
 			AutoActions.onGoingEvent = null;
-			self.logBox.log(self.hero.name + " may have found something. GIVE ME!");
+			self.logBox.log(self.hero.name + " may have found <strong>Nothing</strong>. GIVE ME!");
 			delete AutoActions.search._progressBar;
 			AutoActions.drawEvent();
 		});

@@ -27,7 +27,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 
 	var getAliveRoles = function(roles){
 		var ret = [];
-		for(var i = roles.length -1; i > -1; --i){
+		for(var i = roles.length - 1; i > -1; --i){
 			if(!roles[i].isDead()){
 				ret.push(roles[i]);
 			}
@@ -88,9 +88,9 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 
 	exports.newEnemies = function(hero){
 		var ret = [],
-			i = Utils.random(1, 3); // index in range [0, 3], total of 4;
+			i = Utils.random(1, 3)[0]; // index in range [0, 3], total of 4;
 		for(; i > -1; --i){
-			ret.push(AdaFactory.newAda({lv: hero.lv}));
+			ret.push(AdaFactory.newAda(hero.lv));
 		}
 		this.emit("atk_message_newEnemies", ret);
 		return ret;
@@ -108,8 +108,8 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 	exports.attack = function(args){
 		var aliveParty1 = getAliveRoles(exports.party1),
 			aliveParty2 = getAliveRoles(exports.party2),
-			role1 = aliveParty1[Utils.random(1, aliveParty1.length)],
-			role2 = aliveParty2[Utils.random(1, aliveParty2.length)],
+			role1 = aliveParty1[Utils.random(1, aliveParty1.length)[0]],
+			role2 = aliveParty2[Utils.random(1, aliveParty2.length)[0]],
 			roles = {
 				fromRole: role1,
 				fromParty: aliveParty1,

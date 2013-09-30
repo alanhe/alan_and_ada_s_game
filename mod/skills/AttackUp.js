@@ -8,24 +8,8 @@ define(["./Skill", "../BuffManager"], function(Skill, BuffManager){
 		});
 
 		this.cast = function(args){
-			/*
-			var buff = BuffManager.newBuff({
-				toRole: args.fromRole,
-				target: "atk",
-				value: 50,
-				round: this.round
-			});
+			args.fromRole.ATKMRT(40, true);
 
-			//passive skill should manually apply buff
-			buff.applyBuff();
-
-			return {
-				fromName: args.fromRole.name,
-				toName: args.fromRole.name,
-				damages: 0,
-				skillName: this.name,
-				buff: buff
-			};*/
 			return {
 				fromName: args.fromRole.name,
 				toName: args.fromRole.name,

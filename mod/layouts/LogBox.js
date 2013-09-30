@@ -25,9 +25,9 @@ define(["text!./LogBox.html", "link!./LogBox.css"], function(sHTML){
 			if(this.numMessage < this.numDisplay){
 				++this.numMessage;
 			} else {
-				this.domNode.children().last().remove();
+				this.domNode.children().first().remove();
 			}
-			this.domNode.prepend(domNode);
+			this.domNode.append(domNode);
 		};
 	};
 });

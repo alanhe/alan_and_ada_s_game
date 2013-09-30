@@ -9,8 +9,8 @@ define(["text!./MonsterLayout.html",
 		// self.domNode;
 		// self.hpBar
 		// self.ada
-		var _monsterLayout_on_update_handler = function(evt){
-			self.hpBar.update(parseInt(evt.newVal / self.ada.getValue("m_hp") * 100));
+		var _monsterLayout_on_update_handler = function(types, oldVal, newVal){
+			self.hpBar.update(parseInt(newVal / self.ada.MHP() * 100));
 		};
 
 		this.setup = function(args){
@@ -32,18 +32,18 @@ define(["text!./MonsterLayout.html",
 
 			this.domNode.find(".monsterImage").attr("src", require.toUrl(this.ada.picURL));
 
-			this.domNode.find(".lbl_lv").text(this.ada.lv);
+			this.domNode.find(".lbl_lv").text(this.ada.LV());
 			var ulTitles = this.domNode.find(".monsterTitles");
 			for(var i = 0; i < this.ada.titles.length; ++i){
 				ulTitles.append("<li>" + this.ada.titles[i] + "</li>");
 			}
 			this.domNode.appendTo(args.domNode);
 
-			this.ada.on("update", _monsterLayout_on_update_handler);
+			this.ada.on("update_status", _monsterLayout_on_update_handler);
 		};
 
 		this.destroy = function(){
-			this.ada.off("update", _monsterLayout_on_update_handler);
+			this.ada.off("update_status", _monsterLayout_on_update_handler);
 			this.domNode.remove();
 		};
 	};

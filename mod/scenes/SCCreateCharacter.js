@@ -14,21 +14,6 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
         this.enter = function(){
             this.buildScene();
 
-            this.btnRoll.click(function(){
-                var val = 0;
-                //HP:
-                val = parseInt(100 + Math.random()  * 49);
-                self.hero.setAttribute("c_hp", val);
-                self.hero.setAttribute("m_hp", val);
-                //MP:
-                val = parseInt(1 + Math.random()  * 49);
-                self.hero.setAttribute("c_mp", val);
-                self.hero.setAttribute("m_mp", val);
-                //ATK:
-                val = parseInt(1 + Math.random() * 14);
-                self.hero.setAttribute("atk", val);
-            });
-
             this.btnCreate.click(function(){
                 //FIXME: Make sure Roll is called at least once:
                 self.emit("mv_main_scene", {hero : self.hero});
@@ -48,9 +33,9 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
             var domNode = $(sHTML);
             self.btnCreate = domNode.find("#btn_create");
             self.hero = new Alan();
+            self.hero.CP(30);
             self.heroLayout = new HeroLayout();
             self.heroLayout.setup({domNode: domNode.find("#widget_character"), hero: self.hero});
-            self.btnRoll = domNode.find("#btn_roll");
             self.txtName = domNode.find(".name");
             self.txtName.attr("contenteditable", true);
             self.txtName.attr("title", "Click to update hero's name.");

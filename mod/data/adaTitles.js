@@ -2,31 +2,37 @@ define([
 	{
 		id : 1,
 		name : 'Super',
-		effect : 'atk',
-		percent : 5
+		effects : {
+			STR: 5,
+			ATKMA: 10
+		}
 	},
 	{
 		id : 2,
 		name : 'Strong',
-		effect : 'm_hp',
-		percent : 10
+		effects : {
+			VIT: 5
+		},
 	},
 	{
 		id : 3,
 		name : 'Weak',
-		effect : 'atk',
-		percent : -10
+		effects : {
+			ATKMRP: -10
+		}
 	},
 	{
 		id : 4,
 		name : 'Demon',
-		effect : 'atk',
-		percent : 100
+		effects : {
+			ATKMRP: 50
+		}
 	},
 	{
 		id : 5,
-		name : 'Lazy',
-		effect : 'atk',
-		percent : -50
+		name : 'Swift',
+		effects : {
+			INT: 5
+		}
 	}
 ]);

@@ -46,7 +46,8 @@ define(["./EventEmitter"], function(EventEmitter){
 	exports.search = autoSearch;
 	exports.fight = autoFight;
 
-	var randomEvent = [autoSearch, autoFight];
+	//var randomEvent = [autoSearch, autoFight];
+	var randomEvent = [autoFight];
 	exports.drawEvent = function(){
 		randomEvent[parseInt(Math.random() * randomEvent.length)].start();
 	};

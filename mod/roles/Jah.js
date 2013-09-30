@@ -1,4 +1,4 @@
-define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
+define(["../EventEmitter", "../skills/Attack", "../Utils"], function(EventEmitter, Attack, Utils){
 	return function(){
 		$.extend(this, {
 			aCHP: 1,
@@ -36,7 +36,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
         };
 		// ATK-------------------------------------------------------
 		this.ATKB = function(){
-			return this.aSTR;
+			return this.aSTR * 2;
 		};
 		this.ATKMRP = function(newVal, isAdd, stopEmit){
 			return this.attr("aATKMRP", newVal, isAdd, ["ATKMIN", "ATKMAX"], stopEmit);
@@ -174,8 +174,7 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
                 throw "sAdd must be set in LV()!";
             }
 
-            var
-                  up = newVal,
+            var up = newVal,
                 oldVal = this.aLV,
                 newVal = oldVal + up,
                 sumCP = 0,
@@ -246,6 +245,11 @@ define(["../EventEmitter", "../skills/Attack"], function(EventEmitter, Attack){
 		};
 		this._getUpdateCost = function(oldVal){
 		    return parseInt(oldVal / 10) + 3;
+		};
+		this.ATK = function(){
+			var maxATK = this.ATKMAX(),
+				minATK = this.ATKMIN();
+			return minATK + Math.random() * (maxATK - minATK);
 		};
 	};
 });
