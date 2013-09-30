@@ -15,7 +15,7 @@ define(function(){
 		// oArray - an object array. Every item in the array has a "probable" attribute to indicate its probability to be drawn.
 		//             The name of the attribute is "probable" by default.
 		attrName = attrName || "probable";
-		
+
 		var valTotal = (function(oArr){
 				var sum = 0;
 				for(var i = oArray.length - 1; i > -1; --i){
@@ -63,7 +63,7 @@ define(function(){
 				ret.push(Math.random());
 			}
 		}
-		return num === 1 ? ret[0] : ret;
+		return ret;
 	};
 
 	exports.joinArray = function(array1, array2){
