@@ -10,7 +10,12 @@ define(["text!./MonsterLayout.html",
 		// self.hpBar
 		// self.ada
 		var _monsterLayout_on_update_handler = function(types, oldVal, newVal){
-			self.hpBar.update(parseInt(newVal / self.ada.MHP() * 100));
+			for(var i = types.length - 1; i > -1; --i){
+				if("CHP" === types[i]){
+					self.hpBar.update(self.ada.CHP(), self.ada.MHP());
+				}
+			}
+
 		};
 
 		this.setup = function(args){
@@ -28,7 +33,7 @@ define(["text!./MonsterLayout.html",
 				domNode: this.domNode.find(".monsterHP"),
 				cssHeight: "5px"
 			});
-			this.hpBar.update(100);
+			self.hpBar.update(this.ada.CHP(), this.ada.MHP());
 
 			this.domNode.find(".monsterImage").attr("src", require.toUrl(this.ada.picURL));
 

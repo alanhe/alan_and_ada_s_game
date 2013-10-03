@@ -24,11 +24,13 @@ define(["text!./StatusBar.html", "link!./StatusBar.css"], function(sHTML){
 			this.domNode.remove();
 		};
 
-		this.update = function(percent){
+		this.update = function(cVal, mVal){
 			// arguments:
 			//   percent: int [0, 100];
+			var percent = parseInt(cVal * 100 / mVal);
 			this.statusLeft.css("width", percent + "%");
 			this.statusLeft.css("backgroundColor", this.getColor(percent));
+			this.statusLeft.attr("title", cVal + "/" + mVal);
 		};
 
 		this.getColor = function(percent){
