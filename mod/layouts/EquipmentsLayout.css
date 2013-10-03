@@ -1,0 +1,9 @@
+.equipmentsLayout .menu .item {
+	float: left;
+	width: 20%;
+	cursor: pointer;
+	padding: 10px 5px;
+}
+.equipmentsLayout .menu .item:hover {
+	background-color: #ccc;
+}
