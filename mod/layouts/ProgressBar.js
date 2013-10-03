@@ -7,10 +7,7 @@ define(["text!./ProgressBar.html", "link!./ProgressBar.css"], function(sHTML){
 			//	cssWidth
 			//	cssHeight
 			//  timeInMillis
-
-			this.tickTime = parseInt(args.timeInMills / 15);
-			this.tickValue = 100 / 15;
-
+			this.timeInMillis = args.timeInMillis;
 			this.domNode = $(sHTML);
 			this.progPrecent = this.domNode.find(".progPrecent");
 
@@ -18,20 +15,9 @@ define(["text!./ProgressBar.html", "link!./ProgressBar.css"], function(sHTML){
 		};
 
 		this.start = function(){
-			var self = this,
-			    c = 0;
-
-			var doTick = function(){
-				c += self.tickValue;
-				c = c > 100 ? 100 : c;
-
-				self.update(c);
-
-				if(c < 100){
-					self.handler = setTimeout(doTick, self.tickTime);
-				}
-			};
-			self.handler = setTimeout(doTick, self.tickTime);
+			this.progPrecent.stop().animate({
+				width: "100%"
+			}, this.timeInMillis);
 		};
 
 		this.destroy = function(){
@@ -40,15 +26,15 @@ define(["text!./ProgressBar.html", "link!./ProgressBar.css"], function(sHTML){
 		};
 
 		this.interrupt = function(){
-			if(this.handler != -1){
-				clearTimeout(this.handler);
-			}
+			this.domNode.stop();
 		};
 
 		this.update = function(percent){
 			// arguments:
 			//   percent: int [0, 100];
-			this.progPrecent.css("width", percent + "%");
+			this.progPrecent.stop().animate({
+				width: percent + "%"
+			}, "fast");
 		};
 	};
 });

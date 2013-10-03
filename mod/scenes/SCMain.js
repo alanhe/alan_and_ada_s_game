@@ -71,7 +71,7 @@ define(["./BaseScene", "text!./SCMain.html", "../EventEmitter",
 				AutoActions.restoreStatus._progressBar = new ProgressBar();
 				AutoActions.restoreStatus._progressBar.setup({
 					domNode: domNode,
-					timeInMills: timeInMillis
+					timeInMillis: timeInMillis
 				});
 			});
 			AutoActions.restoreStatus._progressBar.start();
