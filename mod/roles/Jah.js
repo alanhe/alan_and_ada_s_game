@@ -54,7 +54,7 @@ define(["../EventEmitter", "../skills/Attack", "../Utils"], function(EventEmitte
 			return Math.atan(this.aLUK / 50) * 2 / Math.PI;
 		};
 		this._getATK = function(r1, r2){
-			return (this.ATKB() * (1 + 0.01 * this.ATKMR()) + this.ATKMR()) * (r1 + r2 * this.ATKFR());
+			return (this.ATKB() * (1 + 0.01 * this.ATKMR()) + this.ATKMA()) * (r1 + r2 * this.ATKFR());
 		};
 		this.ATKMAX = function(){
 			return this._getATK(1.3, 0.7);
