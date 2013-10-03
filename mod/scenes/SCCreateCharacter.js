@@ -16,12 +16,13 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
 
             this.btnCreate.click(function(){
                 //FIXME: Make sure Roll is called at least once:
+                self.hero.CHP(self.hero.MHP());
                 self.emit("mv_main_scene", {hero : self.hero});
             });
 
             this.txtName.blur(function(){
                 //FIXME: validate input hero's name
-                self.hero.setAttribute("name", $.trim(self.txtName.text()));
+                self.hero.name = $.trim(self.txtName.text());
             });
         };
 
@@ -36,7 +37,7 @@ define(["./BaseScene", "text!./SCCreateCharacter.html",
             self.hero.CP(30);
             self.heroLayout = new HeroLayout();
             self.heroLayout.setup({domNode: domNode.find("#widget_character"), hero: self.hero});
-            self.txtName = domNode.find(".name");
+            self.txtName = domNode.find(".lbl_NAME");
             self.txtName.attr("contenteditable", true);
             self.txtName.attr("title", "Click to update hero's name.");
             $("body").html(domNode);
