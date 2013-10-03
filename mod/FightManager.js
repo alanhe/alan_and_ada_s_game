@@ -90,7 +90,7 @@ define(["./Timer", "./EventEmitter", "./AdaFactory", "./Utils", "./BuffManager"]
 		var ret = [],
 			i = Utils.random(1, 3)[0]; // index in range [0, 3], total of 4;
 		for(; i > -1; --i){
-			ret.push(AdaFactory.newAda(hero.lv));
+			ret.push(AdaFactory.newAda(hero.LV()));
 		}
 		this.emit("atk_message_newEnemies", ret);
 		return ret;
