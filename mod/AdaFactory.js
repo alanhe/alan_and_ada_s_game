@@ -76,7 +76,7 @@ function(Ada, adaList, adaRanks, adaTitles, skillList, Utils){
 		fillTitles(ada.titles, rank.numTitles);
 		fillSkills(ada.equipedSkills, rank.numSkills[0], rank.numSkills[1]);
 
-		ada.lv = lv;
+		ada.aLV = lv;
 		ada.name = ada.name + parseInt(Math.random() * 100);
 		ada.aSTR = ada.aSTR * lv;
 		ada.aVIT = ada.aVIT * lv;
