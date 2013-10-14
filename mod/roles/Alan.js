@@ -2,18 +2,11 @@ define(["./Jah", "../EquipmentsManager"], function(Jah, EquipmentsManager){
 	return function(){
 	    $.extend(this, new Jah(), {
 	        name: "Alan",
+	        inventories: []
 	    });
-	    
-	    this.getEquipments = function(){
-	    	return EquipmentsManager.getEquipments(this);
-	    };
-	    
+
 	    this.getInventories = function(){
-	    	return EquipmentsManager.getInventories(this);
+	    	return this.inventories;
 	    };
-	    
-	    
-	   	
-	    
 	};
 });

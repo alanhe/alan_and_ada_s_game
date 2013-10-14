@@ -1,0 +1,43 @@
+.inventoriesLayout .menu h4 {
+	float: left;
+	width: 20%;
+	font-weight: normal;
+	cursor: pointer;
+	padding: 10px 0;
+	margin: 0;
+}
+
+.inventoriesLayout .menu h4:hover {
+	background-color: #ccc;
+}
+
+.inventoriesLayout .menu .selected {
+	font-weight: bold;
+}
+
+.inventoriesLayout ul{
+	clear: left;
+}
+
+.inventoriesLayout li{
+	height: 18px;
+	margin: 0;
+	padding: 5px 0;
+}
+
+.inventoriesLayout li:hover{
+	height: 17px;
+	background-color: #ffc;
+	border-bottom: 1px solid #ccc;
+}
+
+.inventoriesLayout .toolbar span{
+	cursor: pointer;
+	padding: 0 0.5em;
+	margin: 0;
+}
+
+.inventoriesLayout .toolbar span:hover{
+	background-color: red;
+	border-radius: 4px;
+}
