@@ -1,5 +1,6 @@
 define(function(){
-	var exports = {};
+	var _cache = {},
+	      exports = {};
 
 	var intContains = function(iArray, target){
 		for(var i = iArray.length - 1; i > -1; --i){
@@ -83,6 +84,34 @@ define(function(){
 			return (a ^ Math.random() * 16 >> a/4).toString(16);
 		}) + Date.now().toString(16);
 	};
+	
+    exports.randomString = function(minSize, maxSize, allowAll){
+        var  i, cache = _cache["KEY_VALID_CHARS"];
+        if(!cache){
+            cache = [];
+            for(i = 48; i <= 57; ++i){ // number 0 - 9
+                cache.push(String.fromCharCode(i));
+            }
+            for(i = 65; i <= 90; ++i){ // alphabet a - z
+                cache.push(String.fromCharCode(i));
+            }
+            for(i = 97; i <= 122; ++i){ // alphabet A - Z
+                cache.push(String.fromCharCode(i));
+            }
+            _cache["KEY_VALID_CHARS"] = cache;
+        }
+        
+        var ret = "",
+            randNum = minSize + parseInt(Math.random() * (maxSize - minSize));
+        for(i = 0; i < randNum; ++i){
+            if(!allowAll && (i === 0 || i === randNum - 1)){
+                ret += cache[10 + parseInt(Math.random() * (cache.length - 10))]; // not starts or ends with number;            
+            } else {
+                ret += cache[parseInt(Math.random() * cache.length)];
+            }
+        }
+        return ret;
+    };
 
 	return exports;
 });
